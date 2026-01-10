@@ -89,7 +89,7 @@ def visualizar_pulseira(request, pulseira_id):
     if not pulseira.aceite_termos:
        return render(request, 'erro_privacidade.html', status=403)
     
-    return render(request, 'core/visualizar_pulseira.html', {
+    return render(request, 'core/ver_pulseira.html', {
         'pulseira': pulseira
     })
 
