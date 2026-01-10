@@ -15,6 +15,28 @@
         button { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; }
         button:hover { background: #218838; }
         .iti { width: 100%; }
+        input[type="checkbox"] {
+            width: auto !important; /* Não deixa ele ocupar a tela toda */
+            margin-right: 10px;      /* Espacinho entre o quadrado e o texto */
+            transform: scale(1.2);   /* Deixa o quadradinho um pouco maior (opcional) */
+        }
+
+        .termos-container {
+            display: flex;
+            align-items: center;     /* Alinha verticalmente */
+            justify-content: flex-start; /* Alinha tudo à esquerda */
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-top: 20px;
+        }
+        
+        .termos-container label {
+            margin-bottom: 0;        /* Tira a margem padrão do label */
+            font-weight: normal;
+            cursor: pointer;
+        }
         
         /* Esconder o campo do nome do convênio inicialmente */
         #div_nome_convenio { display: none; }
@@ -100,10 +122,10 @@
             {{ form.responsavel_email }}
         </div>
 
-        <div class="form-group" style="display: flex; gap: 10px; align-items: center; margin-top: 20px;">
+        <div class="termos-container">
             {{ form.aceite_termos }}
-            <label for="{{ form.aceite_termos.id_for_label }}" style="margin:0; font-weight: normal;">
-                Li e aceito os Termos de Uso.
+            <label for="{{ form.aceite_termos.id_for_label }}">
+                Li e concordo com os <a href="/termos/" target="_blank">Termos de Uso</a> e Política de Privacidade.
             </label>
         </div>
 
