@@ -62,7 +62,7 @@ class Pulseira(models.Model):
     medicamentos = models.TextField(
         verbose_name="Medicamentos em Uso", 
         blank=True,
-        help_text="Separe os remédios por vírgula ou uma linha abaixo da outra."
+        help_text="Se não houver, deixe em branco. Separe por vírgula (ex: Lozartana, Puran)."
     )
 
     # --- INSTRUÇÕES ---

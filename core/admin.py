@@ -16,7 +16,7 @@ class PulseiraAdmin(admin.ModelAdmin):
             'fields': ('possui_convenio', 'nome_convenio', 'numero_sus_convenio'),
             'description': 'Selecione SIM no convênio para digitar o nome.'
         }),
-        ('Saúde (Opcional)', {
+        ('Saúde', {
             'fields': ('condicao_medica', 'alergias', 'medicamentos'),
             'classes': ('collapse',), # Deixa essa parte "encolhida" para não poluir, clique para abrir
         }),
