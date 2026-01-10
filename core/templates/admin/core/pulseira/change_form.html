@@ -5,21 +5,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
     
     <style>
-        /* CORREÇÃO: Força o container a aparecer e ter largura correta */
-        .iti { 
-            width: 100%; 
-            max-width: 400px; 
-            display: block; 
-            margin-bottom: 8px; /* Espaço para o texto de ajuda */
-        }
-        
-        /* Garante que o input dentro da biblioteca seja visível e tenha cor certa */
-        .iti input { 
-            visibility: visible !important; 
-            width: 100% !important;
-            color: #333 !important; /* Garante que o texto não fique branco/invisível */
-            height: 35px; /* Altura padrão boa para digitar */
-        }
+        .iti { width: 100%; max-width: 400px; display: block; margin-bottom: 8px; }
+        .iti input { visibility: visible !important; width: 100% !important; color: #333 !important; height: 35px; }
     </style>
 {% endblock %}
 
@@ -31,67 +18,59 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Pega o campo de telefone do Admin
+            
+            // --- PARTE 1: TELEFONE ---
             const inputTelefone = document.querySelector("#id_responsavel_telefone");
-
             if (inputTelefone) {
-                // 1. Inicializa a biblioteca
                 const iti = window.intlTelInput(inputTelefone, {
                     initialCountry: "br",
                     preferredCountries: ["br", "us", "pt", "es"],
-                    separateDialCode: true, // Mostra +55 separado
+                    separateDialCode: true,
                     utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
                 });
 
-                // 2. Adiciona a MENSAGEM DE INSTRUÇÃO visualmente
-                // Criamos um elemento de texto via Javascript para não precisar mexer no models.py agora
+                // Instrução visual
                 const instrucao = document.createElement("div");
                 instrucao.style.cssText = "color: #d9534f; font-size: 12px; font-weight: bold; margin-top: -5px; margin-bottom: 10px;";
                 instrucao.innerText = "⚠️ Digite o DDD + Número (apenas números). Ex: 11999990000";
-                
-                // Insere o texto logo após o campo (a biblioteca cria um 'container', então inserimos depois dele)
                 inputTelefone.closest('.iti').after(instrucao);
 
-                // 3. Formata antes de salvar
+                // Salvar corretamente
                 const form = document.querySelector("#pulseira_form");
                 if (form) {
                     form.addEventListener("submit", function(e) {
                         if (iti.isValidNumber()) {
-                            // Salva o número completo internacional (Ex: +5511999999999)
                             inputTelefone.value = iti.getNumber();
                         }
                     });
                 }
             }
-        });
 
-        // ... (o código do telefone está aqui em cima) ...
-
-            // --- NOVO: LÓGICA DO CONVÊNIO (MOSTRAR/ESCONDER) ---
-            
-            // 1. Pega os campos
+            // --- PARTE 2: CONVÊNIO (Abre e Fecha) ---
             const selectConvenio = document.querySelector("#id_possui_convenio");
-            // O Django coloca o input dentro de uma div com a classe .field-NOME_DO_CAMPO
+            // O Django envolve o campo em uma div com a classe 'field-nome_do_campo'
             const divNomeConvenio = document.querySelector(".field-nome_convenio");
 
             function atualizarConvenio() {
                 if (selectConvenio && divNomeConvenio) {
                     if (selectConvenio.value === 'S') {
-                        divNomeConvenio.style.display = "block"; // Mostra
+                        // Se SIM, mostra o campo de nome (efeito slide simples)
+                        divNomeConvenio.style.display = "block";
                     } else {
-                        divNomeConvenio.style.display = "none";  // Esconde
-                        // Opcional: Limpa o campo se marcar 'Não'
-                        // document.querySelector("#id_nome_convenio").value = ""; 
+                        // Se NÃO, esconde
+                        divNomeConvenio.style.display = "none";
+                        // Opcional: Limpar o campo para não salvar lixo
+                        document.querySelector("#id_nome_convenio").value = ""; 
                     }
                 }
             }
 
-            // 2. Roda a função assim que a página carrega (para ver como está salvo)
-            atualizarConvenio();
-
-            // 3. Roda a função toda vez que mudar o Sim/Não
             if (selectConvenio) {
+                // Roda ao carregar a página (para editar pulseiras já salvas)
+                atualizarConvenio();
+                // Roda sempre que mudar a opção
                 selectConvenio.addEventListener("change", atualizarConvenio);
             }
+        });
     </script>
 {% endblock %}

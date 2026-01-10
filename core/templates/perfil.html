@@ -309,9 +309,11 @@
         <div class="box" style="border-left-color: #6f42c1;">
             <h3>🏥 Convênio Médico</h3>
             {% if pulseira.possui_convenio == 'S' %}
-            <span style="font-weight: bold; color: #333;">{{ pulseira.nome_convenio }}</span>
+                <span style="font-size: 16px; font-weight: bold; color: #333;">
+                    {{ pulseira.nome_convenio }}
+                </span>
             {% else %}
-            Não possui
+                <span style="color: #666;">Não possui</span>
             {% endif %}
         </div>
 
