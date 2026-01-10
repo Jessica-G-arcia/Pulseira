@@ -39,11 +39,19 @@ def fazer_login(request):
             user = form.get_user()
             auth_login(request, user)
             return redirect('dashboard')
+        # Se cair aqui, é porque o formulário tem erros (usuário/senha inválidos)
     else:
         form = AuthenticationForm()
-        # ADICIONE ESTAS DUAS LINHAS ABAIXO para garantir o visual igual:
-        form.fields['username'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Digite seu CPF ou e-mail'})
-        form.fields['password'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Digite sua senha'})
+
+    # ESSA PARTE É A CHAVE: Aplica o CSS em ambos os casos (erro ou início)
+    form.fields['username'].widget.attrs.update({
+        'class': 'form-control', 
+        'placeholder': 'Digite o seu CPF ou e-mail'
+    })
+    form.fields['password'].widget.attrs.update({
+        'class': 'form-control', 
+        'placeholder': 'Digite a sua senha'
+    })
         
     return render(request, 'registration/login.html', {'form': form})
 
