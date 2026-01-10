@@ -1,0 +1,55 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+    
+    <style>
+        .iti { width: 100%; max-width: 400px; display: block; }
+        /* Oculta o campo original enquanto a biblioteca carrega para não piscar */
+        #id_responsavel_telefone { visibility: hidden; }
+        .iti--allow-dropdown input { visibility: visible; }
+    </style>
+{% endblock %}
+
+{% block footer %}
+    {{ block.super }}
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // O Django Admin sempre dá o ID "id_NOME_DO_CAMPO" para os inputs
+            const inputTelefone = document.querySelector("#id_responsavel_telefone");
+
+            if (inputTelefone) {
+                const iti = window.intlTelInput(inputTelefone, {
+                    initialCountry: "br",
+                    preferredCountries: ["br", "us", "pt", "es"],
+                    separateDialCode: true,
+                    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+                });
+
+                // Função para limpar e formatar antes de salvar
+                const form = document.querySelector("#pulseira_form");
+                if (form) {
+                    form.addEventListener("submit", function(e) {
+                        if (iti.isValidNumber()) {
+                            // Atualiza o valor do campo com o número internacional completo (+55...)
+                            inputTelefone.value = iti.getNumber();
+                        } else {
+                            // Se o número estiver errado, avisa (opcional, pois o Admin tem validação própria)
+                            // Mas é bom para garantir o formato E.164
+                            const numeroAtual = inputTelefone.value;
+                            // Só deixa passar se não estiver vazio
+                            if (numeroAtual.trim() !== "") {
+                                inputTelefone.value = iti.getNumber(); 
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+{% endblock %}
