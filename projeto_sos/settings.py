@@ -152,3 +152,12 @@ JAZZMIN_SETTINGS = {
     "copyright": "Sistema SOS Ltd",
     "search_model": "core.Pulseira", # Permite pesquisar pulseiras no topo
 }
+
+# Redirecionar para o painel após login com sucesso
+LOGIN_REDIRECT_URL = 'dashboard'
+
+# Redirecionar para a página de login após sair
+LOGOUT_REDIRECT_URL = 'login'
+
+# Para onde ir se tentar acessar página restrita sem estar logado
+LOGIN_URL = 'login'
