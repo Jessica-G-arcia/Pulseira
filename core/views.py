@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.mail import send_mail
 from geopy.geocoders import Nominatim
+from django.conf import settings
 import json
 from .models import Pulseira
 
@@ -57,7 +58,7 @@ def notificar_localizacao(request, pulseira_id):
             send_mail(
                 assunto,
                 mensagem,
-                'sistema@sos.com',
+                settings.EMAIL_HOST_USER,
                 [pulseira.responsavel_email],
                 fail_silently=False,
             )
