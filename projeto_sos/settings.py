@@ -85,6 +85,11 @@ DATABASES = {
     }
 }
 
+AUTHENTICATION_BACKENDS = [
+    'core.auth_backends.CPFOrEmailBackend', # Seu novo login
+    'django.contrib.auth.backends.ModelBackend', # Mantém o padrão para o Admin
+]
+
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators

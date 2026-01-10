@@ -76,11 +76,12 @@
                 {% csrf_token %}
                 <div class="mb-3">
                     <label class="form-label fw-bold small">Usuário</label>
-                    {{ form.username }}
+                    <input type="text" name="username" class="form-control"
+                        placeholder="Digite o seu CPF ou e-mail" required>
                 </div>
                 <div class="mb-4">
                     <label class="form-label fw-bold small">Senha</label>
-                    <div class="password-container">
+                    <div class="password-container" placeholder="Digite a sua senha">
                         {{ form.password }}
                         <i class="bi bi-eye toggle-password" id="eyeIcon"></i>
                     </div>

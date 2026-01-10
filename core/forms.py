@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from .models import Pulseira, Perfil
 
-# --- VALIDAÇÃO DE CPF ---
 def validar_cpf(value):
     cpf = re.sub(r'\D', '', value)
     if len(cpf) != 11 or cpf == cpf[0] * 11:
@@ -16,7 +15,6 @@ def validar_cpf(value):
         if digito != int(cpf[i]):
             raise ValidationError('CPF inválido.')
 
-# --- FORMULÁRIO DA PULSEIRA (O QUE ESTAVA FALTANDO) ---
 class PulseiraForm(forms.ModelForm):
     class Meta:
         model = Pulseira
@@ -36,7 +34,6 @@ class PulseiraForm(forms.ModelForm):
             'instrucoes_abordagem': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
         }
 
-# --- FORMULÁRIO DE CADASTRO DE USUÁRIO ---
 class CadastroUsuarioForm(UserCreationForm):
     nome_completo = forms.CharField(label='Nome Completo')
     email = forms.EmailField(label='E-mail')
@@ -48,7 +45,8 @@ class CadastroUsuarioForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = UserCreationForm.Meta.fields + ('nome_completo', 'email', 'cpf', 'cep', 'logradouro', 'numero', 'bairro_cidade')
+        # REMOVIDO: 'username' não aparece mais para o usuário
+        fields = ('nome_completo', 'email', 'cpf', 'cep', 'logradouro', 'numero', 'bairro_cidade')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -63,13 +61,18 @@ class CadastroUsuarioForm(UserCreationForm):
         return email
 
     def clean_cpf(self):
-        cpf = self.cleaned_data.get('cpf')
-        if Perfil.objects.filter(cpf=cpf).exists():
+        cpf_limpo = re.sub(r'\D', '', self.cleaned_data.get('cpf'))
+        if Perfil.objects.filter(cpf=cpf_limpo).exists():
             raise ValidationError("Este CPF já está cadastrado.")
-        return cpf
+        return cpf_limpo
 
     def save(self, commit=True):
         user = super().save(commit=False)
+        
+        # Define o username como o CPF (limpo) para garantir unicidade no Django
+        cpf_limpo = self.cleaned_data['cpf']
+        user.username = cpf_limpo 
+        
         nome_partes = self.cleaned_data['nome_completo'].split(' ', 1)
         user.first_name = nome_partes[0]
         user.last_name = nome_partes[1] if len(nome_partes) > 1 else ""
@@ -80,6 +83,6 @@ class CadastroUsuarioForm(UserCreationForm):
             endereco_final = f"CEP: {self.cleaned_data['cep']}, {self.cleaned_data['logradouro']}, {self.cleaned_data['numero']} - {self.cleaned_data['bairro_cidade']}"
             Perfil.objects.update_or_create(
                 user=user, 
-                defaults={'cpf': self.cleaned_data['cpf'], 'endereco': endereco_final}
+                defaults={'cpf': cpf_limpo, 'endereco': endereco_final}
             )
         return user
