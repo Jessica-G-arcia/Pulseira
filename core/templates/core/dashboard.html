@@ -1,24 +1,35 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minhas Pulseiras</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f4f6f9; font-family: 'Segoe UI', sans-serif; }
-        
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
         /* Navbar */
         .navbar {
             background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             padding: 15px 0;
         }
-        .navbar-brand { font-weight: bold; color: #DD2476 !important; font-size: 22px; }
-        
+
+        .navbar-brand {
+            font-weight: bold;
+            color: #DD2476 !important;
+            font-size: 22px;
+        }
+
         /* Container principal */
-        .main-content { padding: 40px 0; }
-        
+        .main-content {
+            padding: 40px 12px;
+        }
+
         /* Botão Adicionar */
         .btn-add {
             background: #28a745;
@@ -34,7 +45,12 @@
             text-decoration: none;
             transition: all 0.2s;
         }
-        .btn-add:hover { background: #218838; color: white; transform: translateY(-2px); }
+
+        .btn-add:hover {
+            background: #218838;
+            color: white;
+            transform: translateY(-2px);
+        }
 
         /* Cartão da Pulseira */
         .pulseira-card {
@@ -42,18 +58,31 @@
             border-radius: 15px;
             padding: 20px;
             border: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             transition: transform 0.2s;
+
+            /* MUDANÇA AQUI: de flex para block ou flex-column */
             display: flex;
-            align-items: center;
+            flex-direction: column;
             gap: 15px;
+
             margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-            border-left: 5px solid #DD2476; /* Detalhe colorido */
+            border-left: 5px solid #DD2476;
         }
-        .pulseira-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-        
+
+        .actions-footer {
+            border-top: 1px solid #eee;
+            /* Linha sutil separando o botão */
+            padding-top: 15px;
+            text-align: right;
+            /* Alinha o botão à direita */
+        }
+
+        .pulseira-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
         .foto-preview {
             width: 70px;
             height: 70px;
@@ -61,11 +90,24 @@
             object-fit: cover;
             border: 3px solid #f0f0f0;
         }
-        
-        .info h4 { margin: 0; font-size: 18px; font-weight: bold; color: #333; }
-        .info p { margin: 0; font-size: 13px; color: #888; }
-        
-        .actions { margin-left: auto; }
+
+        .info h4 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .info p {
+            margin: 0;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .actions {
+            margin-left: auto;
+        }
+
         .btn-ver {
             background: #e9ecef;
             color: #333;
@@ -75,7 +117,30 @@
             font-size: 13px;
             font-weight: 600;
         }
-        .btn-ver:hover { background: #dee2e6; }
+
+        .btn-ver:hover {
+            background: #dee2e6;
+        }
+
+        /* Estilo do botão ocupando a linha toda ou destaque */
+        .btn-ver-bloco {
+            display: inline-block;
+            background: #f8f9fa;
+            color: #333;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: 1px solid #ddd;
+        }
+
+        .btn-ver-bloco:hover {
+            background: #DD2476;
+            color: white;
+            border-color: #DD2476;
+        }
 
         /* Estado vazio */
         .empty-state {
@@ -85,6 +150,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <nav class="navbar">
@@ -101,7 +167,7 @@
     </nav>
 
     <div class="container main-content">
-        
+
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="m-0">Meus Protegidos</h2>
             <a href="{% url 'criar_pulseira' %}" class="btn-add">
@@ -109,16 +175,15 @@
             </a>
         </div>
 
-        <div class="row">
-            {% for pulseira in pulseiras %}
-            <div class="col-md-6 col-lg-4">
-                <div class="pulseira-card">
+        <div class="col-md-6 col-lg-4">
+            <div class="pulseira-card">
+                <div class="d-flex align-items-center gap-3 w-100">
                     {% if pulseira.foto %}
-                        <img src="{{ pulseira.foto.url }}" class="foto-preview">
+                    <img src="{{ pulseira.foto.url }}" class="foto-preview">
                     {% else %}
-                        <div class="foto-preview d-flex align-items-center justify-content-center bg-light text-muted">
-                            📷
-                        </div>
+                    <div class="foto-preview d-flex align-items-center justify-content-center bg-light text-muted">
+                        📷
+                    </div>
                     {% endif %}
 
                     <div class="info">
@@ -126,22 +191,24 @@
                         <p>Idade: {{ pulseira.idade }} anos</p>
                         <p class="text-success small">● Ativo</p>
                     </div>
+                </div>
 
-                    <div class="actions">
-                        <a href="{% url 'visualizar_pulseira' pulseira.id %}" target="_blank" class="btn-ver">
-                            Ver Perfil
-                        </a>
-                    </div>
+                <div class="actions-footer">
+                    <a href="{% url 'visualizar_pulseira' pulseira.id %}" target="_blank" class="btn-ver-bloco">
+                        Ver Perfil Completo
+                    </a>
                 </div>
             </div>
-            {% empty %}
-                <div class="col-12 empty-state">
-                    <h3>Nenhuma pulseira cadastrada 😢</h3>
-                    <p>Clique no botão verde acima para cadastrar a primeira.</p>
-                </div>
-            {% endfor %}
         </div>
+        {% empty %}
+        <div class="col-12 empty-state">
+            <h3>Nenhuma pulseira cadastrada 😢</h3>
+            <p>Clique no botão verde acima para cadastrar a primeira.</p>
+        </div>
+        {% endfor %}
+    </div>
     </div>
 
 </body>
+
 </html>
