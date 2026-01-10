@@ -11,23 +11,24 @@ import json
 
 # Imports locais
 from .models import Pulseira
-from .forms import PulseiraForm
+from .forms import PulseiraForm, CadastroUsuarioForm
 
 # ========================================================
 # ÁREA DE AUTENTICAÇÃO (LOGIN / CADASTRO DE DONO)
 # ========================================================
 
 def cadastro_usuario(request):
-    """Cria uma conta para o dono das pulseiras"""
+    """Cria uma conta para o dono das pulseiras (AGORA COM CPF)"""
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        # Usa o nosso form personalizado
+        form = CadastroUsuarioForm(request.POST) 
         if form.is_valid():
             user = form.save()
-            # Loga o usuário automaticamente após cadastrar
             login(request, user)
             return redirect('dashboard')
     else:
-        form = UserCreationForm()
+        form = CadastroUsuarioForm()
+    
     return render(request, 'registration/cadastro_usuario.html', {'form': form})
 
 def fazer_login(request):

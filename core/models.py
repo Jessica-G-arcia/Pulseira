@@ -131,3 +131,12 @@ class Pulseira(models.Model):
     def idade(self):
         hoje = date.today()
         return hoje.year - self.nascimento.year - ((hoje.month, hoje.day) < (self.nascimento.month, self.nascimento.day))
+    
+    # --- NOVO: PERFIL DO USUÁRIO (GUARDAR CPF E ENDEREÇO) ---
+class Perfil(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
+    cpf = models.CharField(max_length=14, verbose_name="CPF")
+    endereco = models.TextField(verbose_name="Endereço Completo")
+
+    def __str__(self):
+        return f"Perfil de {self.user.username}"

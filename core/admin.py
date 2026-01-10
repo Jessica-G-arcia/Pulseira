@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Pulseira
+from .models import Pulseira, Perfil
 
 @admin.register(Pulseira)
 class PulseiraAdmin(admin.ModelAdmin):
@@ -32,3 +32,8 @@ class PulseiraAdmin(admin.ModelAdmin):
     def idade_visual(self, obj):
         return f"{obj.idade} anos"
     idade_visual.short_description = "Idade"
+
+@admin.register(Perfil)
+class PerfilAdmin(admin.ModelAdmin):
+    list_display = ('user', 'cpf', 'endereco')
+    search_fields = ('user__username', 'cpf')
