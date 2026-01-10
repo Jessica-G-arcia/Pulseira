@@ -6,6 +6,7 @@ from geopy.geocoders import Nominatim
 from django.conf import settings
 import json
 from .models import Pulseira
+from .forms import PulseiraForm
 
 # 1. Exibe o Perfil (Lê o QR Code)
 def perfil_emergencia(request, pulseira_id):
@@ -73,3 +74,16 @@ def notificar_localizacao(request, pulseira_id):
 # 3. Página de Termos
 def pagina_termos(request):
     return render(request, 'termos.html')
+
+# 4. Criação de nova Pulseira Perfil Público
+def criar_pulseira(request):
+    if request.method == 'POST':
+        form = PulseiraForm(request.POST, request.FILES)
+        if form.is_valid():
+            nova_pulseira = form.save()
+            # Redireciona para a página da pulseira criada para ele ver como ficou
+            return redirect('visualizar_pulseira', pulseira_id=nova_pulseira.id)
+    else:
+        form = PulseiraForm()
+    
+    return render(request, 'core/cadastro.html', {'form': form})

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Nova Pulseira SOS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #d9534f; }
+        .form-group { margin-bottom: 15px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; color: #333; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        button:hover { background: #218838; }
+        .iti { width: 100%; }
+        
+        /* Esconder o campo do nome do convênio inicialmente */
+        #div_nome_convenio { display: none; }
+        
+        .help-text { font-size: 12px; color: #666; margin-top: 2px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Nova Pulseira SOS</h1>
+    <p style="text-align: center; color: #666;">Preencha os dados para criar seu perfil de emergência.</p>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label>Nome Completo:</label>
+            {{ form.nome }}
+        </div>
+        <div class="form-group">
+            <label>Data de Nascimento:</label>
+            {{ form.nascimento }}
+        </div>
+        <div class="form-group">
+            <label>Foto (Opcional):</label>
+            {{ form.foto }}
+        </div>
+        <div class="form-group">
+            <label>Tipo Sanguíneo:</label>
+            {{ form.tipo_sanguineo }}
+        </div>
+
+        <hr>
+
+        <div class="form-group">
+            <label>Condições Médicas (Doenças):</label>
+            {{ form.condicao_medica }}
+            <div class="help-text">Separe por vírgula. Ex: Diabetes, Hipertensão.</div>
+        </div>
+        <div class="form-group">
+            <label>Alergias:</label>
+            {{ form.alergias }}
+        </div>
+        <div class="form-group">
+            <label>Medicamentos em Uso:</label>
+            {{ form.medicamentos }}
+        </div>
+
+        <hr>
+
+        <div class="form-group">
+            <label>Possui Convênio Médico?</label>
+            {{ form.possui_convenio }}
+        </div>
+
+        <div class="form-group" id="div_nome_convenio">
+            <label>Nome do Convênio / Carteirinha:</label>
+            {{ form.nome_convenio }}
+        </div>
+
+        <div class="form-group">
+            <label>Número do Cartão SUS:</label>
+            {{ form.numero_sus_convenio }}
+        </div>
+
+        <hr>
+
+        <div class="form-group">
+            <label>Nome do Responsável:</label>
+            {{ form.responsavel_nome }}
+        </div>
+
+        <div class="form-group">
+            <label>Telefone do Responsável (WhatsApp):</label>
+            <input type="tel" id="phone_visual" class="form-control">
+            {{ form.responsavel_telefone.as_hidden }}
+            <div class="help-text">Digite apenas números com DDD.</div>
+        </div>
+
+        <div class="form-group">
+            <label>E-mail do Responsável:</label>
+            {{ form.responsavel_email }}
+        </div>
+
+        <div class="form-group" style="display: flex; gap: 10px; align-items: center; margin-top: 20px;">
+            {{ form.aceite_termos }}
+            <label for="{{ form.aceite_termos.id_for_label }}" style="margin:0; font-weight: normal;">
+                Li e aceito os Termos de Uso.
+            </label>
+        </div>
+
+        <button type="submit">CRIAR PULSEIRA</button>
+    </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+
+<script>
+    // --- 1. LÓGICA DO TELEFONE ---
+    const inputVisual = document.querySelector("#phone_visual");
+    // O Django gera o ID id_responsavel_telefone automaticamente
+    const inputReal = document.querySelector("#id_responsavel_telefone");
+
+    const iti = window.intlTelInput(inputVisual, {
+        initialCountry: "br",
+        preferredCountries: ["br", "us", "pt", "es"],
+        separateDialCode: true,
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+    });
+
+    // Quando enviar, copia o numero formatado
+    document.querySelector("form").addEventListener("submit", function(e) {
+        if (iti.isValidNumber()) {
+            inputReal.value = iti.getNumber();
+        } else {
+            // Se o numero estiver invalido mas o campo nao for vazio, avisa
+            if(inputVisual.value.trim() !== "") {
+               // Aqui você pode decidir se bloqueia ou deixa passar
+            }
+        }
+    });
+
+    // --- 2. LÓGICA DO CONVÊNIO ---
+    const selectConvenio = document.querySelector("#id_possui_convenio");
+    const divNome = document.querySelector("#div_nome_convenio");
+
+    function toggleConvenio() {
+        if(selectConvenio.value === 'S') {
+            divNome.style.display = 'block';
+        } else {
+            divNome.style.display = 'none';
+        }
+    }
+
+    // Inicia e Monitora
+    if(selectConvenio) {
+        toggleConvenio();
+        selectConvenio.addEventListener("change", toggleConvenio);
+    }
+</script>
+
+</body>
+</html>
