@@ -14,6 +14,12 @@ urlpatterns = [
     
     # CORREÇÃO 1: Apontar para 'views.fazer_login' em vez de 'views.login'
     path('login/', views.fazer_login, name='login'),
+
+    # Rotas de Esqueci a Senha
+    path('reset_password/', auth_views.PasswordResetView.as_view(template_name="registration/password_reset.html"), name="reset_password"),
+    path('reset_password_sent/', auth_views.PasswordResetSentView.as_view(template_name="registration/password_reset_sent.html"), name="password_reset_done"),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name="registration/password_reset_confirm.html"), name="password_reset_confirm"),
+    path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(template_name="registration/password_reset_complete.html"), name="password_reset_complete"),
     
     # Logout (O Django já fornece a view pronta, mas precisamos garantir o redirect)
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),

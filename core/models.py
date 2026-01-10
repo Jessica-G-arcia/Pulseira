@@ -135,7 +135,7 @@ class Pulseira(models.Model):
     # --- NOVO: PERFIL DO USUÁRIO (GUARDAR CPF E ENDEREÇO) ---
 class Perfil(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
-    cpf = models.CharField(max_length=14, verbose_name="CPF")
+    cpf = models.CharField(max_length=14, unique=True, verbose_name="CPF") # Adicionado unique=True
     endereco = models.TextField(verbose_name="Endereço Completo")
 
     def __str__(self):

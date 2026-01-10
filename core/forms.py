@@ -5,85 +5,54 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from .models import Pulseira, Perfil
 
-# --- FUNÇÃO DE VALIDAÇÃO DE CPF REAL ---
 def validar_cpf(value):
-    cpf = re.sub(r'\D', '', value) # Remove pontos e traços
+    cpf = re.sub(r'\D', '', value)
     if len(cpf) != 11 or cpf == cpf[0] * 11:
         raise ValidationError('CPF inválido.')
-    
-    # Validação dos dígitos verificadores
     for i in range(9, 11):
         soma = sum(int(cpf[num]) * ((i + 1) - num) for num in range(i))
         digito = (soma * 10 % 11) % 10
         if digito != int(cpf[i]):
             raise ValidationError('CPF inválido.')
 
-class PulseiraForm(forms.ModelForm):
-    class Meta:
-        model = Pulseira
-        fields = [
-            'nome', 'nascimento', 'foto', 'tipo_sanguineo',
-            'possui_convenio', 'nome_convenio', 'numero_sus_convenio',
-            'condicao_medica', 'alergias', 'medicamentos',
-            'instrucoes_abordagem',
-            'responsavel_nome', 'responsavel_telefone', 'responsavel_email',
-            'aceite_termos'
-        ]
-        widgets = {
-            'nascimento': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'condicao_medica': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
-            'alergias': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
-            'medicamentos': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
-            'instrucoes_abordagem': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
-        }
-
 class CadastroUsuarioForm(UserCreationForm):
-    cpf = forms.CharField(
-        label='CPF', 
-        max_length=14,
-        validators=[validar_cpf],
-        widget=forms.TextInput(attrs={'placeholder': '000.000.000-00', 'class': 'form-control'})
-    )
-    cep = forms.CharField(
-        label='CEP',
-        max_length=9,
-        widget=forms.TextInput(attrs={'placeholder': '00000-000', 'class': 'form-control'})
-    )
-    logradouro = forms.CharField(
-        label='Rua/Avenida',
-        widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'})
-    )
-    numero = forms.CharField(
-        label='Número',
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nº'})
-    )
-    bairro_cidade = forms.CharField(
-        label='Bairro / Cidade',
-        widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'})
-    )
+    nome_completo = forms.CharField(label='Nome Completo')
+    email = forms.EmailField(label='E-mail')
+    cpf = forms.CharField(label='CPF', max_length=14, validators=[validar_cpf])
+    cep = forms.CharField(label='CEP', max_length=9)
+    logradouro = forms.CharField(label='Rua/Avenida', widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    numero = forms.CharField(label='Número')
+    bairro_cidade = forms.CharField(label='Bairro / Cidade', widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
     class Meta(UserCreationForm.Meta):
         model = User
-        # Definimos os campos que aparecem no formulário
-        fields = UserCreationForm.Meta.fields + ('cpf', 'cep', 'logradouro', 'numero', 'bairro_cidade',)
+        fields = UserCreationForm.Meta.fields + ('nome_completo', 'email', 'cpf', 'cep', 'logradouro', 'numero', 'bairro_cidade')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise ValidationError("Este e-mail já está em uso.")
+        return email
+
+    def clean_cpf(self):
+        cpf = self.cleaned_data.get('cpf')
+        if Perfil.objects.filter(cpf=cpf).exists():
+            raise ValidationError("Este CPF já está cadastrado.")
+        return cpf
 
     def save(self, commit=True):
-        user = super().save(commit=commit)
-        
-        # Pegamos os dados limpos do formulário
-        cpf = self.cleaned_data['cpf']
-        cep = self.cleaned_data['cep']
-        rua = self.cleaned_data['logradouro']
-        num = self.cleaned_data['numero']
-        bairro_cidade = self.cleaned_data['bairro_cidade']
-        
-        # Montamos uma única string de endereço para salvar no campo 'endereco' do seu Model Perfil
-        endereco_completo = f"CEP: {cep}, {rua}, {num} - {bairro_cidade}"
-        
-        # Salva no banco de dados (Modelo Perfil)
-        Perfil.objects.update_or_create(
-            user=user, 
-            defaults={'cpf': cpf, 'endereco': endereco_completo}
-        )
-        
+        user = super().save(commit=False)
+        nome_partes = self.cleaned_data['nome_completo'].split(' ', 1)
+        user.first_name = nome_partes[0]
+        user.last_name = nome_partes[1] if len(nome_partes) > 1 else ""
+        user.email = self.cleaned_data['email']
+        if commit:
+            user.save()
+            endereco_final = f"CEP: {self.cleaned_data['cep']}, {self.cleaned_data['logradouro']}, {self.cleaned_data['numero']} - {self.cleaned_data['bairro_cidade']}"
+            Perfil.objects.update_or_create(user=user, defaults={'cpf': self.cleaned_data['cpf'], 'endereco': endereco_final})
         return user
