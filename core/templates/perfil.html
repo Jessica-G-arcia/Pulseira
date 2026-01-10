@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOS - {{ pulseira.nome }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            background: #f0f2f5;
+            text-align: center;
+            color: #333;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 0 auto;
+            border-top: 8px solid #d9534f;
+        }
+
+        .foto-perfil {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #d9534f;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            margin: 5px 0;
+            font-size: 26px;
+            color: #2c3e50;
+        }
+
+        .subtitulo {
+            color: #7f8c8d;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        /* Sangue e Idade lado a lado */
+        .info-grid {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            background: #e9ecef;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .badge.sangue {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        /* Estilo dos Boxes */
+        .box {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid #ccc;
+        }
+
+        .box h3 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .box.medico {
+            border-left-color: #007bff;
+        }
+
+        /* Azul para condições medicas */
+        .box.alerta {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+        }
+
+        /* Vermelho para alergias */
+        .box.calma {
+            border-left-color: #28a745;
+            background: #e8f5e97c;
+        }
+
+        /* Verde para instruções */
+
+        /* Estilo para listas dentro dos boxes */
+        .box ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .box li {
+            margin-bottom: 4px;
+        }
+
+        /* Dropdown (Details) */
+        details {
+            cursor: pointer;
+            text-align: left;
+        }
+
+        /* Se o details estiver solto na pagina tem fundo, se estiver dentro do box fica transparente */
+        body>details {
+            background: #eee;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .box details {
+            margin-top: 5px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        summary {
+            font-weight: normal;
+            outline: none;
+            color: #007bff;
+        }
+
+        .btn-ligar {
+            display: block;
+            background: #28a745;
+            color: white;
+            padding: 16px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(40, 167, 69, 0.3);
+            transition: transform 0.1s;
+        }
+
+        .btn-ligar:active {
+            transform: scale(0.98);
+        }
+
+        .footer {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        {% if pulseira.foto %}
+        <img src="{{ pulseira.foto.url }}" alt="Foto" class="foto-perfil">
+        {% endif %}
+
+        <h1>{{ pulseira.nome }}</h1>
+
+        <div class="info-grid">
+            <div class="badge">{{ pulseira.idade }} anos</div>
+            {% if pulseira.tipo_sanguineo != 'NA' %}
+            <div class="badge sangue">🩸 {{ pulseira.tipo_sanguineo }}</div>
+            {% endif %}
+        </div>
+
+        <div class="box medico">
+            <h3>🏥 Condições Médicas</h3>
+            <ul>
+                {% for condicao in pulseira.get_condicoes_lista %}
+                <li>{{ condicao }}</li>
+                {% empty %}
+                <li>Nenhuma informada</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="box alerta">
+            <h3>⚠️ Alergias</h3>
+            <ul>
+                {% for alergia in pulseira.get_alergias_lista %}
+                <li>{{ alergia }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="box">
+            <h3>💊 Medicamentos</h3>
+            {% with lista=pulseira.get_medicamentos_lista %}
+            {% if lista %}
+            <details>
+                <summary>Ver lista completa</summary><br>
+                <ul>
+                    {% for remedio in lista %}
+                    <li>{{ remedio }}</li>
+                    {% endfor %}
+                </ul>
+            </details>
+            {% else %}
+            <p style="margin:0; font-size: 14px; color: #666;">Nenhum medicamento cadastrado.</p>
+            {% endif %}
+            {% endwith %}
+        </div>
+
+        {% if pulseira.instrucoes_abordagem %}
+        <div class="box calma">
+            <h3>🤝 Como Ajudar / Abordagem</h3>
+            {{ pulseira.instrucoes_abordagem }}
+        </div>
+        {% endif %}
+
+        {% if pulseira.numero_sus_convenio %}
+        <div class="box">
+            <h3>🏥 Convênio / SUS</h3>
+            {{ pulseira.numero_sus_convenio }}
+        </div>
+        {% endif %}
+
+        <a href="tel:{{ pulseira.responsavel_telefone }}" class="btn-ligar">
+            📞 LIGAR PARA FAMÍLIA
+        </a>
+
+        <div class="footer">Sistema de Identificação SOS</div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            // Em produção, descomente a linha abaixo:
+            // if (confirm("Você encontrou esta pessoa? Clique em OK para enviar a localização para a família.")) {
+            //    pegarLocalizacao();
+            // }
+        };
+
+        function pegarLocalizacao() {
+            // Opções de configuração do GPS
+            const opcoes = {
+                enableHighAccuracy: true, // <--- ISSO PEDE O GPS EXATO
+                timeout: 15000,           // Espera até 15 segundos para conseguir a melhor precisão
+                maximumAge: 0             // Não aceita localização guardada em cache (queremos a atual)
+            };
+
+            if (navigator.geolocation) {
+                // Adicionamos feedback visual porque o GPS pode demorar uns segundos
+                alert("Buscando coordenadas exatas... Aguarde um momento."); 
+                
+                navigator.geolocation.getCurrentPosition(enviarParaServidor, tratarErro, opcoes);
+            } else {
+                alert("Seu navegador não suporta geolocalização.");
+            }
+        }
+
+        function enviarParaServidor(posicao) {
+            const lat = posicao.coords.latitude;
+            const lon = posicao.coords.longitude;
+            const precisao = posicao.coords.accuracy; // É legal saber a margem de erro (em metros)
+
+            console.log(`Localização obtida com precisão de ${precisao} metros.`);
+
+            fetch(`/api/notificar/{{ pulseira.id }}/`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    latitude: lat, 
+                    longitude: lon,
+                    precisao: precisao 
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if(data.status === 'sucesso') {
+                    alert("Localização enviada com sucesso! A família foi notificada.");
+                }
+            })
+            .catch(err => console.error("Erro ao enviar:", err));
+        }
+
+        // Função para lidar com casos onde a pessoa nega ou o GPS falha
+        function tratarErro(erro) {
+            let mensagem = "";
+            switch(erro.code) {
+                case erro.PERMISSION_DENIED:
+                    mensagem = "O envio da localização foi bloqueado pelo usuário.";
+                    break;
+                case erro.POSITION_UNAVAILABLE:
+                    mensagem = "As informações de localização não estão disponíveis.";
+                    break;
+                case erro.TIMEOUT:
+                    mensagem = "O pedido de localização demorou muito.";
+                    break;
+                default:
+                    mensagem = "Ocorreu um erro desconhecido ao buscar localização.";
+                    break;
+            }
+            console.warn(mensagem);
+            // Opcional: Aqui você poderia tentar enviar sem localização ou tentar baixa precisão
+        }
+    </script>
+</body>
+
+</html>
