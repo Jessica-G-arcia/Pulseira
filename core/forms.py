@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Pulseira, Perfil
 
-class PulseiraForm(forms.ModelForm):
+class PulseiraForm(forms.ModelModelForm):
     class Meta:
         model = Pulseira
         fields = [
@@ -16,38 +16,49 @@ class PulseiraForm(forms.ModelForm):
         ]
         widgets = {
             'nascimento': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'condicao_medica': forms.Textarea(attrs={'rows': 3}),
-            'alergias': forms.Textarea(attrs={'rows': 3}),
-            'medicamentos': forms.Textarea(attrs={'rows': 3}),
-            'instrucoes_abordagem': forms.Textarea(attrs={'rows': 3}),
+            'condicao_medica': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'alergias': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'medicamentos': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'instrucoes_abordagem': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
         }
 
-        # --- NOVO: FORMULÁRIO DE CADASTRO COM CPF ---
 class CadastroUsuarioForm(UserCreationForm):
     cpf = forms.CharField(
         label='CPF', 
         max_length=14,
         widget=forms.TextInput(attrs={'placeholder': '000.000.000-00', 'class': 'form-control'})
     )
-    endereco = forms.CharField(
-        label='Endereço', 
-        widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control'})
+    cep = forms.CharField(
+        label='CEP',
+        max_length=9,
+        widget=forms.TextInput(attrs={'placeholder': '00000-000', 'class': 'form-control'})
+    )
+    logradouro = forms.CharField(
+        label='Rua/Avenida',
+        widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'})
+    )
+    numero = forms.CharField(
+        label='Número',
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    bairro_cidade = forms.CharField(
+        label='Bairro / Cidade',
+        widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'})
     )
 
     class Meta(UserCreationForm.Meta):
         model = User
-        # Adiciona os campos novos na lista de campos do User
-        fields = UserCreationForm.Meta.fields + ('cpf', 'endereco',)
+        fields = UserCreationForm.Meta.fields + ('cpf', 'cep', 'logradouro', 'numero', 'bairro_cidade',)
 
     def save(self, commit=True):
-        # 1. Salva o Usuário (Nome e Senha)
         user = super().save(commit=commit)
         
-        # 2. Salva o Perfil (CPF e Endereço)
+        # Consolida o endereço para salvar no modelo Perfil
+        endereco_final = f"{self.cleaned_data['logradouro']}, {self.cleaned_data['numero']} - {self.cleaned_data['bairro_cidade']}"
         cpf = self.cleaned_data['cpf']
-        endereco = self.cleaned_data['endereco']
         
-        # Cria ou atualiza o perfil vinculado
-        Perfil.objects.update_or_create(user=user, defaults={'cpf': cpf, 'endereco': endereco})
-        
+        Perfil.objects.update_or_create(
+            user=user, 
+            defaults={'cpf': cpf, 'endereco': endereco_final}
+        )
         return user

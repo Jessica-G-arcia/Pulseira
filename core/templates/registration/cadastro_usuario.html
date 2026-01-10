@@ -5,138 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crie sua Conta SOS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
     <style>
-        body {
-            background-color: #e9ecef; /* Fundo cinza suave */
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Segoe UI', sans-serif;
-            padding: 20px;
-        }
-
-        .card-cadastro {
-            width: 100%;
-            max-width: 500px;
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            overflow: hidden;
-            background: white;
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, #FF512F 0%, #DD2476 100%); /* Gradiente avermelhado (SOS) */
-            padding: 30px;
-            text-align: center;
-            border: none;
-        }
-
-        .card-header h3 {
-            color: white;
-            margin: 0;
-            font-weight: 700;
-            font-size: 24px;
-        }
-
-        .card-header p {
-            color: rgba(255,255,255,0.8);
-            margin-top: 5px;
-            font-size: 14px;
-        }
-
-        .card-body {
-            padding: 40px;
-        }
-
-        /* Estilizando os campos do Django */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: #495057;
-            font-size: 14px;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        /* Força os inputs a ficarem bonitos mesmo se não tiver widget no Python */
-        input[type="text"],
-        input[type="password"],
-        input[type="email"],
-        textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            font-size: 15px;
-            transition: all 0.3s;
-            background-color: #f8f9fa;
-            box-sizing: border-box; /* Garante que padding não quebre a largura */
-        }
-
-        input:focus, textarea:focus {
-            border-color: #DD2476;
-            background-color: white;
-            outline: none;
-            box-shadow: 0 0 0 4px rgba(221, 36, 118, 0.1);
-        }
-
-        .help-text {
-            font-size: 11px;
-            color: #888;
-            margin-top: 5px;
-            display: block;
-        }
-
-        .help-text ul {
-            padding-left: 15px;
-            margin-bottom: 0;
-        }
-
-        .btn-cadastrar {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #FF512F 0%, #DD2476 100%);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            margin-top: 10px;
-        }
-
-        .btn-cadastrar:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(221, 36, 118, 0.3);
-        }
-
-        .login-link {
-            text-align: center;
-            margin-top: 25px;
-            font-size: 14px;
-            color: #666;
-        }
-
-        .login-link a {
-            color: #DD2476;
-            text-decoration: none;
-            font-weight: bold;
-        }
+        body { background-color: #e9ecef; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Segoe UI', sans-serif; padding: 20px; }
+        .card-cadastro { width: 100%; max-width: 550px; border: none; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); overflow: hidden; background: white; }
+        .card-header { background: linear-gradient(135deg, #FF512F 0%, #DD2476 100%); padding: 30px; text-align: center; border: none; color: white; }
+        .card-body { padding: 40px; }
+        .form-group { margin-bottom: 18px; }
+        .form-label { font-weight: 600; color: #495057; font-size: 14px; margin-bottom: 5px; display: block; }
+        input.form-control { border-radius: 10px; padding: 10px 15px; border: 2px solid #eee; }
+        input.form-control:focus { border-color: #DD2476; box-shadow: none; }
+        input[readonly] { background-color: #f8f9fa; cursor: not-allowed; }
+        .btn-cadastrar { width: 100%; padding: 14px; background: linear-gradient(135deg, #FF512F 0%, #DD2476 100%); border: none; border-radius: 10px; color: white; font-weight: bold; margin-top: 15px; transition: 0.3s; }
+        .btn-cadastrar:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(221, 36, 118, 0.3); }
+        .login-link { text-align: center; margin-top: 20px; font-size: 14px; }
+        .login-link a { color: #DD2476; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="card-cadastro">
         <div class="card-header">
-            <h3>Criar Conta</h3>
-            <p>Gerencie suas pulseiras de segurança</p>
+            <h3>Criar Conta SOS</h3>
+            <p>Seus dados de responsável</p>
         </div>
         
         <div class="card-body">
@@ -145,59 +35,73 @@
 
                 {% for field in form %}
                     <div class="form-group">
-                        <label class="form-label" for="{{ field.id_for_label }}">
-                            {{ field.label }}
-                        </label>
-                        
+                        <label class="form-label">{{ field.label }}</label>
                         {{ field }}
-
                         {% if field.errors %}
-                            <div class="text-danger small mt-1">
-                                {% for error in field.errors %}• {{ error }}{% endfor %}
-                            </div>
-                        {% endif %}
-
-                        {% if field.help_text %}
-                            <div class="help-text">{{ field.help_text|safe }}</div>
+                            <small class="text-danger">{% for error in field.errors %}{{ error }}{% endfor %}</small>
                         {% endif %}
                     </div>
                 {% endfor %}
 
-                <button type="submit" class="btn-cadastrar">CRIAR CONTA</button>
+                <button type="submit" class="btn-cadastrar">CRIAR MINHA CONTA</button>
             </form>
 
             <div class="login-link">
-                Já tem cadastro? <a href="{% url 'login' %}">Entrar agora</a>
+                Já tem conta? <a href="{% url 'login' %}">Fazer Login</a>
             </div>
         </div>
     </div>
 
+    
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // 1. Procura o campo de CPF pelo nome padrão do Django ou pelo ID
-            // O Django geralmente gera id_cpf
+            // Seletores baseados nos nomes dos campos do Django
             const inputCPF = document.querySelector('input[name="cpf"]');
+            const inputCEP = document.querySelector('input[name="cep"]');
+            const inputRua = document.querySelector('input[name="logradouro"]');
+            const inputNum = document.querySelector('input[name="numero"]');
+            const inputBairro = document.querySelector('input[name="bairro_cidade"]');
 
+            // Máscara de CPF
             if (inputCPF) {
-                inputCPF.addEventListener('input', function(e) {
-                    let value = e.target.value.replace(/\D/g, ""); // Remove tudo que não é número
-                    
-                    if (value.length > 11) value = value.slice(0, 11); // Limita a 11 números
+                inputCPF.addEventListener('input', e => {
+                    let v = e.target.value.replace(/\D/g, "").slice(0, 11);
+                    if (v.length > 9) v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+                    else if (v.length > 6) v = v.replace(/^(\d{3})(\d{3})(\d{3})/, "$1.$2.$3");
+                    else if (v.length > 3) v = v.replace(/^(\d{3})(\d{3})/, "$1.$2");
+                    e.target.value = v;
+                });
+            }
 
-                    // Aplica a máscara 000.000.000-00
-                    if (value.length > 9) {
-                        value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2}).*/, "$1.$2.$3-$4");
-                    } else if (value.length > 6) {
-                        value = value.replace(/^(\d{3})(\d{3})(\d{3}).*/, "$1.$2.$3");
-                    } else if (value.length > 3) {
-                        value = value.replace(/^(\d{3})(\d{3}).*/, "$1.$2");
+            // Máscara e Busca de CEP
+            if (inputCEP) {
+                inputCEP.addEventListener('input', e => {
+                    let v = e.target.value.replace(/\D/g, "").slice(0, 8);
+                    if (v.length > 5) v = v.replace(/^(\d{5})(\d)/, "$1-$2");
+                    e.target.value = v;
+                });
+
+                inputCEP.addEventListener('blur', function() {
+                    let cep = this.value.replace(/\D/g, "");
+                    if (cep.length === 8) {
+                        inputRua.value = "Buscando...";
+                        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                            .then(r => r.json())
+                            .then(data => {
+                                if (!data.erro) {
+                                    inputRua.value = data.logradouro;
+                                    inputBairro.value = `${data.bairro} - ${data.localidade}/${data.uf}`;
+                                    inputNum.focus();
+                                } else {
+                                    alert("CEP não encontrado.");
+                                    inputRua.value = "";
+                                }
+                            });
                     }
-                    
-                    e.target.value = value;
                 });
             }
         });
     </script>
-
 </body>
 </html>
