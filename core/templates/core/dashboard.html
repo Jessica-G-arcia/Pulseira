@@ -175,38 +175,43 @@
             </a>
         </div>
 
-        <div class="col-md-6 col-lg-4">
-            <div class="pulseira-card">
-                <div class="d-flex align-items-center gap-3 w-100">
-                    {% if pulseira.foto %}
-                    <img src="{{ pulseira.foto.url }}" class="foto-preview">
-                    {% else %}
-                    <div class="foto-preview d-flex align-items-center justify-content-center bg-light text-muted">
-                        📷
-                    </div>
-                    {% endif %}
+        <div class="row">
+            
+            {% for pulseira in pulseiras %}
+            <div class="col-md-6 col-lg-4">
+                <div class="pulseira-card">
+                    <div class="d-flex align-items-center gap-3 w-100">
+                        {% if pulseira.foto %}
+                            <img src="{{ pulseira.foto.url }}" class="foto-preview">
+                        {% else %}
+                            <div class="foto-preview d-flex align-items-center justify-content-center bg-light text-muted">
+                                📷
+                            </div>
+                        {% endif %}
 
-                    <div class="info">
-                        <h4>{{ pulseira.nome }}</h4>
-                        <p>Idade: {{ pulseira.idade }} anos</p>
-                        <p class="text-success small">● Ativo</p>
+                        <div class="info">
+                            <h4>{{ pulseira.nome }}</h4>
+                            <p>Idade: {{ pulseira.idade }} anos</p>
+                            <p class="text-success small">● Ativo</p>
+                        </div>
                     </div>
-                </div>
 
-                <div class="actions-footer">
-                    <a href="{% url 'visualizar_pulseira' pulseira.id %}" target="_blank" class="btn-ver-bloco">
-                        Ver Perfil Completo
-                    </a>
+                    <div class="actions-footer">
+                        <a href="{% url 'visualizar_pulseira' pulseira.id %}" target="_blank" class="btn-ver-bloco">
+                            Ver Perfil Completo
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-        {% empty %}
-        <div class="col-12 empty-state">
-            <h3>Nenhuma pulseira cadastrada 😢</h3>
-            <p>Clique no botão verde acima para cadastrar a primeira.</p>
-        </div>
-        {% endfor %}
-    </div>
+
+            {% empty %}
+            <div class="col-12 empty-state">
+                <h3>Nenhuma pulseira cadastrada 😢</h3>
+                <p>Clique no botão verde acima para cadastrar a primeira.</p>
+            </div>
+            {% endfor %}
+
+        </div> </div>
     </div>
 
 </body>
