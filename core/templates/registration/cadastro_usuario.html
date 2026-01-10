@@ -1,0 +1,6 @@
+<h2>Crie sua conta para gerenciar pulseiras</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Criar Conta</button>
+</form>

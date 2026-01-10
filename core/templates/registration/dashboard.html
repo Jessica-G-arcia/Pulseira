@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Minhas Pulseiras</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+        .card { background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between;}
+        .btn { padding: 10px 20px; text-decoration: none; border-radius: 5px; color: white; font-weight: bold; }
+        .btn-add { background: #28a745; display: inline-block; margin-bottom: 20px; }
+        .btn-ver { background: #007bff; font-size: 14px; }
+        .logout { float: right; color: red; }
+    </style>
+</head>
+<body>
+
+    <a href="{% url 'logout' %}" class="logout">Sair</a>
+    <h1>Olá, {{ user.username }}! 👋</h1>
+    <p>Aqui estão suas pulseiras cadastradas.</p>
+
+    <a href="{% url 'criar_pulseira' %}" class="btn btn-add">+ ADICIONAR NOVA PULSEIRA</a>
+
+    {% for pulseira in pulseiras %}
+        <div class="card">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                {% if pulseira.foto %}
+                    <img src="{{ pulseira.foto.url }}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                {% else %}
+                    <div style="width: 50px; height: 50px; background: #ccc; border-radius: 50%;"></div>
+                {% endif %}
+                
+                <div>
+                    <strong>{{ pulseira.nome }}</strong><br>
+                    <small>Cadastrado em: {{ pulseira.id|truncatechars:10 }}</small>
+                </div>
+            </div>
+
+            <a href="{% url 'visualizar_pulseira' pulseira.id %}" target="_blank" class="btn btn-ver">👁️ Ver Perfil Público</a>
+        </div>
+    {% empty %}
+        <p>Você ainda não tem nenhuma pulseira cadastrada.</p>
+    {% endfor %}
+
+</body>
+</html>

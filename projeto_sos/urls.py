@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
 from core import views  # Importa o arquivo views inteiro para evitar erros
@@ -7,17 +8,17 @@ from core import views  # Importa o arquivo views inteiro para evitar erros
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # 1. Cadastro (Link que você manda para o cliente)
-    path('cadastro/', views.criar_pulseira, name='cadastro_pulseira'),
+    # --- ÁREA DO DONO ---
+    path('', views.dashboard, name='home'), # Raiz vai pro dashboard (se logado)
+    path('cadastro-conta/', views.cadastro_usuario, name='cadastro_usuario'),
+    path('login/', views.fazer_login, name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('painel/', views.dashboard, name='dashboard'),
+    
+    path('adicionar-pulseira/', views.criar_pulseira, name='criar_pulseira'),
 
-    # 2. Visualização (Onde o QR Code vai levar)
-    # Deixei 'ver/' para o link ficar curto, mas o nome interno é 'visualizar_pulseira'
+    # --- ÁREA PÚBLICA (QR CODE) - ISSO MANTÉM SEU TESTE FUNCIONANDO ---
     path('ver/<uuid:pulseira_id>/', views.visualizar_pulseira, name='visualizar_pulseira'),
-
-    # 3. API do GPS (Botão de Pânico)
     path('api/notificar/<uuid:pulseira_id>/', views.api_notificar, name='api_notificar'),
-
-    # 4. Termos (Só descomente se você tiver criado essa função no views.py)
-    # path('termos/', views.pagina_termos, name='termos'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

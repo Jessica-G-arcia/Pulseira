@@ -1,10 +1,12 @@
 from django.db import models
+from django.contrib.auth.models import User
 import uuid
 from datetime import date
 from django.utils.safestring import mark_safe
 
 class Pulseira(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     
     # --- DADOS PESSOAIS ---
     nome = models.CharField(max_length=100)
