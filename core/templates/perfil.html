@@ -33,142 +33,84 @@
             margin-bottom: 10px;
         }
 
-        h1 {
-            margin: 5px 0;
-            font-size: 26px;
-            color: #2c3e50;
-        }
+        h1 { margin: 5px 0; font-size: 26px; color: #2c3e50; }
+        .info-grid { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .badge { background: #e9ecef; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; }
+        .badge.sangue { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
 
-        .subtitulo {
-            color: #7f8c8d;
-            font-size: 16px;
-            margin-bottom: 15px;
-        }
-
-        /* Sangue e Idade lado a lado */
-        .info-grid {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .badge {
-            background: #e9ecef;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .badge.sangue {
-            background: #ffebee;
-            color: #c62828;
-            border: 1px solid #ffcdd2;
-        }
-
-        /* Estilo dos Boxes */
         .box {
-            text-align: left;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            border-left: 4px solid #ccc;
+            text-align: left; background: #f8f9fa; padding: 15px;
+            border-radius: 8px; margin-bottom: 12px; border-left: 4px solid #ccc;
         }
+        .box h3 { margin: 0 0 8px 0; font-size: 14px; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+        .box ul { margin: 0; padding-left: 20px; }
+        .box li { margin-bottom: 4px; }
 
-        .box h3 {
-            margin: 0 0 8px 0;
-            font-size: 14px;
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+        .box.medico { border-left-color: #007bff; }
+        .box.alerta { border-left-color: #dc3545; background: #fff5f5; }
+        .box.calma { border-left-color: #28a745; background: #e8f5e97c; }
 
-        .box.medico {
-            border-left-color: #007bff;
-        }
-
-        /* Azul para condições medicas */
-        .box.alerta {
-            border-left-color: #dc3545;
-            background: #fff5f5;
-        }
-
-        /* Vermelho para alergias */
-        .box.calma {
-            border-left-color: #28a745;
-            background: #e8f5e97c;
-        }
-
-        /* Verde para instruções */
-
-        /* Estilo para listas dentro dos boxes */
-        .box ul {
-            margin: 0;
-            padding-left: 20px;
-        }
-
-        .box li {
-            margin-bottom: 4px;
-        }
-
-        /* Dropdown (Details) */
-        details {
-            cursor: pointer;
-            text-align: left;
-        }
-
-        /* Se o details estiver solto na pagina tem fundo, se estiver dentro do box fica transparente */
-        body>details {
-            background: #eee;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-
-        .box details {
-            margin-top: 5px;
-            border-top: 1px solid #eee;
-            padding-top: 10px;
-        }
-
-        summary {
-            font-weight: normal;
-            outline: none;
-            color: #007bff;
-        }
+        details { cursor: pointer; text-align: left; }
+        summary { font-weight: normal; outline: none; color: #007bff; }
+        body>details { background: #eee; padding: 10px; border-radius: 8px; margin-top: 10px; }
+        .box details { margin-top: 5px; border-top: 1px solid #eee; padding-top: 10px; }
 
         .btn-ligar {
-            display: block;
-            background: #28a745;
-            color: white;
-            padding: 16px;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 18px;
-            margin-top: 20px;
-            box-shadow: 0 4px 6px rgba(40, 167, 69, 0.3);
-            transition: transform 0.1s;
+            display: block; background: #28a745; color: white; padding: 16px;
+            text-decoration: none; border-radius: 50px; font-weight: bold;
+            font-size: 18px; margin-top: 20px; box-shadow: 0 4px 6px rgba(40, 167, 69, 0.3);
+        }
+        .btn-gps {
+            display: block; width: 100%; background: #d9534f; color: white;
+            padding: 12px; border: none; border-radius: 50px; font-weight: bold;
+            font-size: 16px; margin-top: 10px; cursor: pointer;
+            box-shadow: 0 4px 6px rgba(217, 83, 79, 0.3);
         }
 
-        .btn-ligar:active {
-            transform: scale(0.98);
+        /* --- ESTILO DO MODAL (JANELA PERSONALIZADA) --- */
+        .modal-overlay {
+            display: none; /* Começa escondido */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); /* Fundo escuro transparente */
+            z-index: 1000;
+            justify-content: center; align-items: center;
         }
-
-        .footer {
-            font-size: 12px;
-            color: #aaa;
-            margin-top: 30px;
+        .modal-content {
+            background: white; padding: 25px; border-radius: 12px;
+            width: 85%; max-width: 320px; text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            animation: subir 0.3s ease-out;
+        }
+        @keyframes subir { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .modal-titulo { font-size: 20px; font-weight: bold; color: #d9534f; margin-bottom: 10px; }
+        .modal-texto { font-size: 15px; color: #555; margin-bottom: 20px; line-height: 1.4; }
+        
+        .btn-modal-sim {
+            background: #d9534f; color: white; border: none; padding: 12px 20px;
+            border-radius: 8px; font-size: 16px; font-weight: bold; width: 100%;
+            cursor: pointer; margin-bottom: 10px;
+        }
+        .btn-modal-nao {
+            background: transparent; color: #777; border: none; padding: 10px;
+            font-size: 14px; cursor: pointer; text-decoration: underline;
         }
     </style>
 </head>
 
 <body>
+
+    <div id="meuModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-titulo">🚨 Atenção!</div>
+            <div class="modal-texto">
+                Você encontrou esta pessoa?<br><br>
+                Podemos enviar sua localização atual para avisar a família imediatamente?
+            </div>
+            <button class="btn-modal-sim" onclick="aceitarGPS()">Sim, avisar família</button>
+            <button class="btn-modal-nao" onclick="fecharModal()">Não, apenas ver dados</button>
+        </div>
+    </div>
 
     <div class="card">
         {% if pulseira.foto %}
@@ -183,6 +125,10 @@
             <div class="badge sangue">🩸 {{ pulseira.tipo_sanguineo }}</div>
             {% endif %}
         </div>
+
+        <button onclick="pegarLocalizacao()" class="btn-gps">
+            📍 ENVIAR LOCALIZAÇÃO AGORA
+        </button>
 
         <div class="box medico">
             <h3>🏥 Condições Médicas</h3>
@@ -244,25 +190,31 @@
     </div>
 
     <script>
+        // Ao carregar a página, mostra o NOSSO modal bonito
         window.onload = function() {
-            // Em produção, descomente a linha abaixo:
-            if (confirm("Você encontrou esta pessoa? Clique em OK para enviar a localização para a família.")) {
-               pegarLocalizacao();
-            }
+            document.getElementById('meuModal').style.display = 'flex';
         };
 
+        function fecharModal() {
+            document.getElementById('meuModal').style.display = 'none';
+        }
+
+        function aceitarGPS() {
+            fecharModal();
+            pegarLocalizacao();
+        }
+
         function pegarLocalizacao() {
-            // Opções de configuração do GPS
+            const botao = document.querySelector('.btn-gps');
+            if(botao) botao.innerHTML = "⏳ Buscando satélites...";
+
             const opcoes = {
-                enableHighAccuracy: true, // <--- ISSO PEDE O GPS EXATO
-                timeout: 15000,           // Espera até 15 segundos para conseguir a melhor precisão
-                maximumAge: 0             // Não aceita localização guardada em cache (queremos a atual)
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 0
             };
 
             if (navigator.geolocation) {
-                // Adicionamos feedback visual porque o GPS pode demorar uns segundos
-                alert("Buscando coordenadas exatas... Aguarde um momento."); 
-                
                 navigator.geolocation.getCurrentPosition(enviarParaServidor, tratarErro, opcoes);
             } else {
                 alert("Seu navegador não suporta geolocalização.");
@@ -272,47 +224,32 @@
         function enviarParaServidor(posicao) {
             const lat = posicao.coords.latitude;
             const lon = posicao.coords.longitude;
-            const precisao = posicao.coords.accuracy; // É legal saber a margem de erro (em metros)
+            const precisao = posicao.coords.accuracy;
 
-            console.log(`Localização obtida com precisão de ${precisao} metros.`);
+            const botao = document.querySelector('.btn-gps');
+            if(botao) {
+                botao.style.background = "#28a745";
+                botao.innerHTML = "✅ Localização Enviada!";
+            }
 
             fetch(`/api/notificar/{{ pulseira.id }}/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                    latitude: lat, 
-                    longitude: lon,
-                    precisao: precisao 
-                })
+                body: JSON.stringify({ latitude: lat, longitude: lon, precisao: precisao })
             })
             .then(r => r.json())
             .then(data => {
                 if(data.status === 'sucesso') {
-                    alert("Localização enviada com sucesso! A família foi notificada.");
+                    alert("A família foi avisada com sucesso!");
                 }
             })
             .catch(err => console.error("Erro ao enviar:", err));
         }
 
-        // Função para lidar com casos onde a pessoa nega ou o GPS falha
         function tratarErro(erro) {
-            let mensagem = "";
-            switch(erro.code) {
-                case erro.PERMISSION_DENIED:
-                    mensagem = "O envio da localização foi bloqueado pelo usuário.";
-                    break;
-                case erro.POSITION_UNAVAILABLE:
-                    mensagem = "As informações de localização não estão disponíveis.";
-                    break;
-                case erro.TIMEOUT:
-                    mensagem = "O pedido de localização demorou muito.";
-                    break;
-                default:
-                    mensagem = "Ocorreu um erro desconhecido ao buscar localização.";
-                    break;
-            }
-            console.warn(mensagem);
-            // Opcional: Aqui você poderia tentar enviar sem localização ou tentar baixa precisão
+            const botao = document.querySelector('.btn-gps');
+            if(botao) botao.innerHTML = "❌ Erro / Tentar Novamente";
+            alert("Não foi possível pegar a localização automaticamente. Por favor, clique no botão 'Enviar Localização' se quiser tentar de novo.");
         }
     </script>
 </body>
