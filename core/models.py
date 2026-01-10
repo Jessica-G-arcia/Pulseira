@@ -20,7 +20,29 @@ class Pulseira(models.Model):
     ]
     tipo_sanguineo = models.CharField(max_length=3, choices=TIPOS_SANGUE, default='NA', verbose_name="Tipo Sanguíneo")
 
-    numero_sus_convenio = models.CharField(max_length=50, blank=True, verbose_name="Nº Carteirinha SUS ou Convênio")
+    # --- PLANO DE SAÚDE / SUS ---
+    
+    numero_sus_convenio = models.CharField(
+        max_length=50, 
+        blank=True, 
+        verbose_name="Número do Cartão SUS"
+    )
+
+    OPCOES_SIM_NAO = [('S', 'Sim'), ('N', 'Não')]
+    
+    possui_convenio = models.CharField(
+        max_length=1,
+        choices=OPCOES_SIM_NAO,
+        default='N',
+        verbose_name="Possui Convênio Médico?"
+    )
+
+    nome_convenio = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name="Nome do Convênio",
+        help_text="Digite o nome (e o número da carteirinha, se quiser). Ex: Unimed - 123456"
+    )
 
     # --- SAÚDE ---
     condicao_medica = models.TextField(
@@ -51,9 +73,9 @@ class Pulseira(models.Model):
     )
     
     # --- CONTATOS ---
-    responsavel_nome = models.CharField(max_length=100)
-    responsavel_telefone = models.CharField(max_length=20)
-    responsavel_email = models.EmailField(blank=True, null=True, verbose_name="Email para Notificação")
+    responsavel_nome = models.CharField(max_length=100, verbose_name="Nome do Responsável")
+    responsavel_telefone = models.CharField(max_length=20, verbose_name="Telefone para Contato")
+    responsavel_email = models.EmailField(blank=True, null=True, verbose_name="E-mail para Notificação")
 
     aceite_termos = models.BooleanField(
         default=False,

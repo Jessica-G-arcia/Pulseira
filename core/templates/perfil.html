@@ -33,66 +33,198 @@
             margin-bottom: 10px;
         }
 
-        h1 { margin: 5px 0; font-size: 26px; color: #2c3e50; }
-        .info-grid { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-        .badge { background: #e9ecef; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; }
-        .badge.sangue { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+        h1 {
+            margin: 5px 0;
+            font-size: 26px;
+            color: #2c3e50;
+        }
+
+        .info-grid {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            background: #e9ecef;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .badge.sangue {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
 
         .box {
-            text-align: left; background: #f8f9fa; padding: 15px;
-            border-radius: 8px; margin-bottom: 12px; border-left: 4px solid #ccc;
+            text-align: left;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid #ccc;
         }
-        .box h3 { margin: 0 0 8px 0; font-size: 14px; color: #555; text-transform: uppercase; letter-spacing: 1px; }
-        .box ul { margin: 0; padding-left: 20px; }
-        .box li { margin-bottom: 4px; }
 
-        .box.medico { border-left-color: #007bff; }
-        .box.alerta { border-left-color: #dc3545; background: #fff5f5; }
-        .box.calma { border-left-color: #28a745; background: #e8f5e97c; }
+        .box h3 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-        details { cursor: pointer; text-align: left; }
-        summary { font-weight: normal; outline: none; color: #007bff; }
-        body>details { background: #eee; padding: 10px; border-radius: 8px; margin-top: 10px; }
-        .box details { margin-top: 5px; border-top: 1px solid #eee; padding-top: 10px; }
+        .box ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .box li {
+            margin-bottom: 4px;
+        }
+
+        .box.medico {
+            border-left-color: #007bff;
+        }
+
+        .box.alerta {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+        }
+
+        .box.calma {
+            border-left-color: #28a745;
+            background: #e8f5e97c;
+        }
+
+        details {
+            cursor: pointer;
+            text-align: left;
+        }
+
+        summary {
+            font-weight: normal;
+            outline: none;
+            color: #007bff;
+        }
+
+        body>details {
+            background: #eee;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .box details {
+            margin-top: 5px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
 
         .btn-ligar {
-            display: block; background: #28a745; color: white; padding: 16px;
-            text-decoration: none; border-radius: 50px; font-weight: bold;
-            font-size: 18px; margin-top: 20px; box-shadow: 0 4px 6px rgba(40, 167, 69, 0.3);
+            display: block;
+            background: #28a745;
+            color: white;
+            padding: 16px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(40, 167, 69, 0.3);
         }
+
         .btn-gps {
-            display: block; width: 100%; background: #d9534f; color: white;
-            padding: 12px; border: none; border-radius: 50px; font-weight: bold;
+            display: block;
+            width: 100%;
+            background: #d9534f;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
             margin-bottom: 12px;
-            font-size: 16px; margin-top: 10px; cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
             box-shadow: 0 4px 6px rgba(217, 83, 79, 0.3);
         }
 
         /* --- ESTILO DO MODAL --- */
         .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); z-index: 1000;
-            justify-content: center; align-items: center;
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
         }
+
         .modal-content {
-            background: white; padding: 25px; border-radius: 12px;
-            width: 85%; max-width: 320px; text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 85%;
+            max-width: 320px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
             animation: subir 0.3s ease-out;
         }
-        @keyframes subir { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
-        .modal-titulo { font-size: 20px; font-weight: bold; color: #d9534f; margin-bottom: 10px; }
-        .modal-texto { font-size: 15px; color: #555; margin-bottom: 20px; line-height: 1.4; }
-        
-        .btn-modal-sim {
-            background: #d9534f; color: white; border: none; padding: 12px 20px;
-            border-radius: 8px; font-size: 16px; font-weight: bold; width: 100%;
-            cursor: pointer; margin-bottom: 10px;
+
+        @keyframes subir {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
+
+        .modal-titulo {
+            font-size: 20px;
+            font-weight: bold;
+            color: #d9534f;
+            margin-bottom: 10px;
+        }
+
+        .modal-texto {
+            font-size: 15px;
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .btn-modal-sim {
+            background: #d9534f;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
         .btn-modal-nao {
-            background: transparent; color: #777; border: none; padding: 10px;
-            font-size: 14px; cursor: pointer; text-decoration: underline;
+            background: transparent;
+            color: #777;
+            border: none;
+            padding: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -174,9 +306,18 @@
         </div>
         {% endif %}
 
+        <div class="box" style="border-left-color: #6f42c1;">
+            <h3>🏥 Convênio Médico</h3>
+            {% if pulseira.possui_convenio == 'S' %}
+            <span style="font-weight: bold; color: #333;">{{ pulseira.nome_convenio }}</span>
+            {% else %}
+            Não possui
+            {% endif %}
+        </div>
+
         {% if pulseira.numero_sus_convenio %}
         <div class="box">
-            <h3>🏥 Convênio / SUS</h3>
+            <h3>💳 Cartão SUS</h3>
             {{ pulseira.numero_sus_convenio }}
         </div>
         {% endif %}
@@ -189,7 +330,7 @@
     </div>
 
     <script>
-        window.onload = function() {
+        window.onload = function () {
             document.getElementById('meuModal').style.display = 'flex';
         };
 
@@ -204,7 +345,7 @@
 
         function pegarLocalizacao() {
             const botao = document.querySelector('.btn-gps');
-            if(botao) botao.innerHTML = "⏳ Buscando satélites...";
+            if (botao) botao.innerHTML = "⏳ Buscando satélites...";
 
             const opcoes = {
                 enableHighAccuracy: true,
@@ -226,7 +367,7 @@
 
             // Muda o botão para verde imediatamente como feedback
             const botao = document.querySelector('.btn-gps');
-            if(botao) {
+            if (botao) {
                 botao.style.background = "#28a745";
                 botao.innerHTML = "✅ Localização Enviada!";
             }
@@ -236,21 +377,21 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ latitude: lat, longitude: lon, precisao: precisao })
             })
-            .then(r => r.json())
-            .then(data => {
-                // REMOVI O ALERT AQUI. 
-                // Se deu certo, o botão já está verde e avisando. O usuário não precisa clicar em nada.
-                if(data.status === 'sucesso') {
-                    console.log("Sucesso silencioso: Família notificada.");
-                }
-            })
-            .catch(err => console.error("Erro ao enviar:", err));
+                .then(r => r.json())
+                .then(data => {
+                    // REMOVI O ALERT AQUI. 
+                    // Se deu certo, o botão já está verde e avisando. O usuário não precisa clicar em nada.
+                    if (data.status === 'sucesso') {
+                        console.log("Sucesso silencioso: Família notificada.");
+                    }
+                })
+                .catch(err => console.error("Erro ao enviar:", err));
         }
 
         function tratarErro(erro) {
             const botao = document.querySelector('.btn-gps');
-            if(botao) botao.innerHTML = "❌ Erro / Tentar Novamente";
-            
+            if (botao) botao.innerHTML = "❌ Erro / Tentar Novamente";
+
             // Só mostramos alerta se der ERRO, pois aí o usuário precisa saber
             alert("Não foi possível pegar a localização. Tente clicar no botão novamente.");
         }

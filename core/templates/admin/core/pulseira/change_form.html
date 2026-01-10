@@ -64,5 +64,34 @@
                 }
             }
         });
+
+        // ... (o código do telefone está aqui em cima) ...
+
+            // --- NOVO: LÓGICA DO CONVÊNIO (MOSTRAR/ESCONDER) ---
+            
+            // 1. Pega os campos
+            const selectConvenio = document.querySelector("#id_possui_convenio");
+            // O Django coloca o input dentro de uma div com a classe .field-NOME_DO_CAMPO
+            const divNomeConvenio = document.querySelector(".field-nome_convenio");
+
+            function atualizarConvenio() {
+                if (selectConvenio && divNomeConvenio) {
+                    if (selectConvenio.value === 'S') {
+                        divNomeConvenio.style.display = "block"; // Mostra
+                    } else {
+                        divNomeConvenio.style.display = "none";  // Esconde
+                        // Opcional: Limpa o campo se marcar 'Não'
+                        // document.querySelector("#id_nome_convenio").value = ""; 
+                    }
+                }
+            }
+
+            // 2. Roda a função assim que a página carrega (para ver como está salvo)
+            atualizarConvenio();
+
+            // 3. Roda a função toda vez que mudar o Sim/Não
+            if (selectConvenio) {
+                selectConvenio.addEventListener("change", atualizarConvenio);
+            }
     </script>
 {% endblock %}
