@@ -161,3 +161,13 @@ LOGOUT_REDIRECT_URL = 'login'
 
 # Para onde ir se tentar acessar página restrita sem estar logado
 LOGIN_URL = 'login'
+
+# Permite que o Django aceite solicitações do seu domínio
+ALLOWED_HOSTS = ['jessicagarcia1.pythonanywhere.com']
+
+# Configurações de Segurança para HTTPS (Essencial para PythonAnywhere)
+CSRF_TRUSTED_ORIGINS = ['https://jessicagarcia1.pythonanywhere.com']
+
+# Garante que os cookies do CSRF e da Sessão só viajem por HTTPS
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
