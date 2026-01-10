@@ -33,7 +33,6 @@ def cadastro_usuario(request):
     return render(request, 'registration/cadastro_usuario.html', {'form': form})
 
 def fazer_login(request):
-    """Exibe a tela de login e processa a autenticação"""
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
@@ -42,6 +41,10 @@ def fazer_login(request):
             return redirect('dashboard')
     else:
         form = AuthenticationForm()
+        # ADICIONE ESTAS DUAS LINHAS ABAIXO para garantir o visual igual:
+        form.fields['username'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Digite seu CPF ou e-mail'})
+        form.fields['password'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Digite sua senha'})
+        
     return render(request, 'registration/login.html', {'form': form})
 
 # ========================================================
