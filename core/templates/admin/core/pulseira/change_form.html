@@ -3,10 +3,11 @@
 {% block extrahead %}
     {{ block.super }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
-    
     <style>
         .iti { width: 100%; max-width: 400px; display: block; margin-bottom: 8px; }
         .iti input { visibility: visible !important; width: 100% !important; color: #333 !important; height: 35px; }
+        /* Animação suave para o campo aparecer */
+        .form-row.field-nome_convenio { transition: all 0.3s ease-in-out; }
     </style>
 {% endblock %}
 
@@ -19,7 +20,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             
-            // --- PARTE 1: TELEFONE ---
+            // --- 1. CONFIGURAÇÃO DO TELEFONE ---
             const inputTelefone = document.querySelector("#id_responsavel_telefone");
             if (inputTelefone) {
                 const iti = window.intlTelInput(inputTelefone, {
@@ -29,47 +30,45 @@
                     utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
                 });
 
-                // Instrução visual
-                const instrucao = document.createElement("div");
-                instrucao.style.cssText = "color: #d9534f; font-size: 12px; font-weight: bold; margin-top: -5px; margin-bottom: 10px;";
-                instrucao.innerText = "⚠️ Digite o DDD + Número (apenas números). Ex: 11999990000";
-                inputTelefone.closest('.iti').after(instrucao);
+                // Instrução
+                const container = inputTelefone.closest('.iti');
+                if(container) {
+                    const instrucao = document.createElement("div");
+                    instrucao.style.cssText = "color: #d9534f; font-size: 12px; font-weight: bold; margin-top: 5px; margin-bottom: 10px;";
+                    instrucao.innerText = "⚠️ Digite o DDD + Número (apenas números).";
+                    container.after(instrucao);
+                }
 
-                // Salvar corretamente
                 const form = document.querySelector("#pulseira_form");
                 if (form) {
                     form.addEventListener("submit", function(e) {
-                        if (iti.isValidNumber()) {
-                            inputTelefone.value = iti.getNumber();
-                        }
+                        if (iti.isValidNumber()) inputTelefone.value = iti.getNumber();
                     });
                 }
             }
 
-            // --- PARTE 2: CONVÊNIO (Abre e Fecha) ---
-            const selectConvenio = document.querySelector("#id_possui_convenio");
-            // O Django envolve o campo em uma div com a classe 'field-nome_do_campo'
-            const divNomeConvenio = document.querySelector(".field-nome_convenio");
+            // --- 2. CONFIGURAÇÃO DO CONVÊNIO (LÓGICA ROBUSTA) ---
+            const selectConvenio = document.getElementById("id_possui_convenio");
+            const inputNomeConvenio = document.getElementById("id_nome_convenio");
 
-            function atualizarConvenio() {
-                if (selectConvenio && divNomeConvenio) {
+            if (selectConvenio && inputNomeConvenio) {
+                // Truque: Encontra a LINHA INTEIRA (.form-row) onde o campo está
+                // Isso funciona melhor do que tentar adivinhar a classe
+                const rowNomeConvenio = inputNomeConvenio.closest('.form-row');
+
+                function toggleConvenio() {
                     if (selectConvenio.value === 'S') {
-                        // Se SIM, mostra o campo de nome (efeito slide simples)
-                        divNomeConvenio.style.display = "block";
+                        rowNomeConvenio.style.display = "block"; // Mostra
                     } else {
-                        // Se NÃO, esconde
-                        divNomeConvenio.style.display = "none";
-                        // Opcional: Limpar o campo para não salvar lixo
-                        document.querySelector("#id_nome_convenio").value = ""; 
+                        rowNomeConvenio.style.display = "none";  // Esconde
+                        inputNomeConvenio.value = ""; // Limpa se esconder
                     }
                 }
-            }
 
-            if (selectConvenio) {
-                // Roda ao carregar a página (para editar pulseiras já salvas)
-                atualizarConvenio();
-                // Roda sempre que mudar a opção
-                selectConvenio.addEventListener("change", atualizarConvenio);
+                // Roda agora (carregamento)
+                toggleConvenio();
+                // Roda quando mudar
+                selectConvenio.addEventListener("change", toggleConvenio);
             }
         });
     </script>
