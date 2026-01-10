@@ -5,10 +5,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
     
     <style>
-        .iti { width: 100%; max-width: 400px; display: block; }
-        /* Oculta o campo original enquanto a biblioteca carrega para não piscar */
-        #id_responsavel_telefone { visibility: hidden; }
-        .iti--allow-dropdown input { visibility: visible; }
+        /* CORREÇÃO: Força o container a aparecer e ter largura correta */
+        .iti { 
+            width: 100%; 
+            max-width: 400px; 
+            display: block; 
+            margin-bottom: 8px; /* Espaço para o texto de ajuda */
+        }
+        
+        /* Garante que o input dentro da biblioteca seja visível e tenha cor certa */
+        .iti input { 
+            visibility: visible !important; 
+            width: 100% !important;
+            color: #333 !important; /* Garante que o texto não fique branco/invisível */
+            height: 35px; /* Altura padrão boa para digitar */
+        }
     </style>
 {% endblock %}
 
@@ -20,32 +31,34 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // O Django Admin sempre dá o ID "id_NOME_DO_CAMPO" para os inputs
+            // Pega o campo de telefone do Admin
             const inputTelefone = document.querySelector("#id_responsavel_telefone");
 
             if (inputTelefone) {
+                // 1. Inicializa a biblioteca
                 const iti = window.intlTelInput(inputTelefone, {
                     initialCountry: "br",
                     preferredCountries: ["br", "us", "pt", "es"],
-                    separateDialCode: true,
+                    separateDialCode: true, // Mostra +55 separado
                     utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
                 });
 
-                // Função para limpar e formatar antes de salvar
+                // 2. Adiciona a MENSAGEM DE INSTRUÇÃO visualmente
+                // Criamos um elemento de texto via Javascript para não precisar mexer no models.py agora
+                const instrucao = document.createElement("div");
+                instrucao.style.cssText = "color: #d9534f; font-size: 12px; font-weight: bold; margin-top: -5px; margin-bottom: 10px;";
+                instrucao.innerText = "⚠️ Digite o DDD + Número (apenas números). Ex: 11999990000";
+                
+                // Insere o texto logo após o campo (a biblioteca cria um 'container', então inserimos depois dele)
+                inputTelefone.closest('.iti').after(instrucao);
+
+                // 3. Formata antes de salvar
                 const form = document.querySelector("#pulseira_form");
                 if (form) {
                     form.addEventListener("submit", function(e) {
                         if (iti.isValidNumber()) {
-                            // Atualiza o valor do campo com o número internacional completo (+55...)
+                            // Salva o número completo internacional (Ex: +5511999999999)
                             inputTelefone.value = iti.getNumber();
-                        } else {
-                            // Se o número estiver errado, avisa (opcional, pois o Admin tem validação própria)
-                            // Mas é bom para garantir o formato E.164
-                            const numeroAtual = inputTelefone.value;
-                            // Só deixa passar se não estiver vazio
-                            if (numeroAtual.trim() !== "") {
-                                inputTelefone.value = iti.getNumber(); 
-                            }
                         }
                     });
                 }
