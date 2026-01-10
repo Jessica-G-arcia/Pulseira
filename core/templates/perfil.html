@@ -67,12 +67,10 @@
             box-shadow: 0 4px 6px rgba(217, 83, 79, 0.3);
         }
 
-        /* --- ESTILO DO MODAL (JANELA PERSONALIZADA) --- */
+        /* --- ESTILO DO MODAL --- */
         .modal-overlay {
-            display: none; /* Começa escondido */
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); /* Fundo escuro transparente */
-            z-index: 1000;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); z-index: 1000;
             justify-content: center; align-items: center;
         }
         .modal-content {
@@ -190,7 +188,6 @@
     </div>
 
     <script>
-        // Ao carregar a página, mostra o NOSSO modal bonito
         window.onload = function() {
             document.getElementById('meuModal').style.display = 'flex';
         };
@@ -226,6 +223,7 @@
             const lon = posicao.coords.longitude;
             const precisao = posicao.coords.accuracy;
 
+            // Muda o botão para verde imediatamente como feedback
             const botao = document.querySelector('.btn-gps');
             if(botao) {
                 botao.style.background = "#28a745";
@@ -239,8 +237,10 @@
             })
             .then(r => r.json())
             .then(data => {
+                // REMOVI O ALERT AQUI. 
+                // Se deu certo, o botão já está verde e avisando. O usuário não precisa clicar em nada.
                 if(data.status === 'sucesso') {
-                    alert("A família foi avisada com sucesso!");
+                    console.log("Sucesso silencioso: Família notificada.");
                 }
             })
             .catch(err => console.error("Erro ao enviar:", err));
@@ -249,7 +249,9 @@
         function tratarErro(erro) {
             const botao = document.querySelector('.btn-gps');
             if(botao) botao.innerHTML = "❌ Erro / Tentar Novamente";
-            alert("Não foi possível pegar a localização automaticamente. Por favor, clique no botão 'Enviar Localização' se quiser tentar de novo.");
+            
+            // Só mostramos alerta se der ERRO, pois aí o usuário precisa saber
+            alert("Não foi possível pegar a localização. Tente clicar no botão novamente.");
         }
     </script>
 </body>
