@@ -127,3 +127,7 @@ def api_notificar(request, pulseira_id):
             return JsonResponse({'status': 'erro', 'msg': str(e)})
             
     return JsonResponse({'status': 'erro', 'msg': 'Método inválido'})
+
+def termos_uso(request):
+    """Exibe a página de termos de uso"""
+    return render(request, 'core/termos.html')

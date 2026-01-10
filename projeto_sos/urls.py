@@ -15,6 +15,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('painel/', views.dashboard, name='dashboard'),
     path('adicionar-pulseira/', views.criar_pulseira, name='criar_pulseira'),
+    path('termos/', views.termos_uso, name='termos_uso'),
 
     # --- FLUXO DE ESQUECI A SENHA (CORRIGIDO) ---
     path('reset_password/', 
