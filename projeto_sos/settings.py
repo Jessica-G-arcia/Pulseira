@@ -12,8 +12,11 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -21,10 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$i)&1os&ugf7$$c(iyytrwf1k#u0&yl-+$)+y75pli8u^$3n@e'
+SECRET_KEY = os.getenv('SECRET_KEY', 'chave-padrao-caso-falhe')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['*']
 
@@ -138,12 +141,8 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 # --- PREENCHA COM SEUS DADOS ---
-# Seu endereço de email GMAIL (que vai disparar o aviso)
-EMAIL_HOST_USER = 'jessyads111@gmail.com'
-
-# A senha de 16 letras que você gerou no Passo 1 (NÃO use sua senha normal)
-# Cole dentro das aspas, pode deixar os espaços ou tirar, tanto faz.
-EMAIL_HOST_PASSWORD = 'kosycgnhchasbjny'
+EMAIL_HOST_USER = os.getenv('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
 
 JAZZMIN_SETTINGS = {
     "site_title": "Sistema SOS",
