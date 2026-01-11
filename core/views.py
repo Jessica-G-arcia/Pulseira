@@ -20,16 +20,23 @@ from .forms import CadastroUsuarioForm, PulseiraForm, EditarUsuarioForm
 # ========================================================
 
 def cadastro_usuario(request):
-    """Cria uma conta para o dono das pulseiras (Com CPF e Endereço)"""
     if request.method == 'POST':
         form = CadastroUsuarioForm(request.POST) 
         if form.is_valid():
             user = form.save()
-            # Loga o usuário automaticamente após o cadastro usando o alias
+            
+            # --- O PULO DO GATO ---
+            # Dizemos: "Esse usuário é válido no banco de dados padrão"
+            # Isso permite que ele entre direto sem digitar a senha de novo
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
+            # ----------------------
+            
             auth_login(request, user)
             return redirect('dashboard')
     else:
         form = CadastroUsuarioForm()
+    
+    return render(request, 'registration/cadastro_usuario.html', {'form': form})
     
     return render(request, 'registration/cadastro_usuario.html', {'form': form})
 
