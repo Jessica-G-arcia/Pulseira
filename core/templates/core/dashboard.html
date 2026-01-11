@@ -285,14 +285,30 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body pt-0">
-                    <h5 class="fw-bold mb-3" id="qrNome"></h5>
-                    <div class="bg-light p-3 rounded mb-3 d-inline-block border">
-                        <img id="qrImage" src="" alt="QR Code" class="qr-img">
+                    <h5 class="fw-bold mb-3" id="qrNome">Pulseira</h5>
+                    
+                    <div class="bg-white p-3 rounded mb-3 d-inline-block border shadow-sm">
+                        <img id="qrImage" src="" alt="QR Code" class="qr-img" crossorigin="anonymous">
                     </div>
-                    <p class="small text-muted">Aponte a câmera do celular ou imprima este código.</p>
-                    <a id="linkPublico" href="#" target="_blank" class="btn btn-outline-primary btn-sm mt-2">
-                        <i class="bi bi-box-arrow-up-right"></i> Abrir Link
-                    </a>
+                    
+                    <p class="small text-muted mb-4">
+                        Use os botões abaixo para salvar o código e imprimir para colocar na pulseira ou cartão.
+                    </p>
+
+                    <div class="d-grid gap-2 col-10 mx-auto">
+                        
+                        <button onclick="baixarImagemQR()" class="btn btn-success fw-bold">
+                            <i class="bi bi-download"></i> Salvar Imagem (PNG)
+                        </button>
+
+                        <button onclick="imprimirQR()" class="btn btn-outline-dark fw-bold">
+                            <i class="bi bi-printer"></i> Imprimir / Salvar PDF
+                        </button>
+
+                        <a id="linkPublico" href="#" target="_blank" class="btn btn-link text-decoration-none text-muted small mt-2">
+                            <i class="bi bi-box-arrow-up-right"></i> Testar Link no Navegador
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -301,28 +317,86 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Lógica do Modal de Exclusão
+        // Variáveis globais para guardar os dados atuais do modal aberto
+        let qrCodeUrlAtual = "";
+        let nomeAtual = "";
+
+        // 1. Abre o Modal e Gera o QR Code
+        function mostrarQRCode(nome, urlRelativa) {
+            const dominio = window.location.protocol + "//" + window.location.host;
+            const urlCompleta = dominio + urlRelativa;
+
+            // Atualiza as variáveis globais
+            nomeAtual = nome;
+            
+            // Atualiza textos e links
+            document.getElementById('qrNome').innerText = "Pulseira de " + nome;
+            document.getElementById('linkPublico').href = urlCompleta;
+
+            // Gera URL da API (Adicionei margem 'qzone=1' para ficar bonito na impressão)
+            qrCodeUrlAtual = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=10&data=${encodeURIComponent(urlCompleta)}`;
+            
+            document.getElementById('qrImage').src = qrCodeUrlAtual;
+
+            new bootstrap.Modal(document.getElementById('qrModal')).show();
+        }
+
+        // 2. Função para Baixar como Imagem (PNG)
+        async function baixarImagemQR() {
+            try {
+                // Busca a imagem como um "blob" (arquivo bruto)
+                const response = await fetch(qrCodeUrlAtual);
+                const blob = await response.blob();
+                
+                // Cria um link temporário na memória do navegador
+                const urlBlob = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = urlBlob;
+                
+                // Define o nome do arquivo (ex: QR_Code_Joao.png)
+                link.download = `QR_Code_${nomeAtual}.png`;
+                
+                // Clica no link e remove ele
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+            } catch (error) {
+                alert("Erro ao baixar imagem. Tente clicar com o botão direito e 'Salvar Imagem'.");
+            }
+        }
+
+        // 3. Função para Imprimir ou Salvar como PDF
+        function imprimirQR() {
+            // Abre uma janela em branco
+            const janelaPrint = window.open('', '', 'height=600,width=800');
+            
+            // Escreve o HTML limpo nela (apenas o necessário)
+            janelaPrint.document.write('<html><head><title>Imprimir QR Code</title>');
+            janelaPrint.document.write('<style>body{font-family: sans-serif; text-align: center; padding: 50px;} img{max-width: 300px; border: 1px solid #ccc;} h1{color:#333;}</style>');
+            janelaPrint.document.write('</head><body>');
+            janelaPrint.document.write(`<h1>Pulseira de ${nomeAtual}</h1>`);
+            janelaPrint.document.write(`<img src="${qrCodeUrlAtual}" />`);
+            janelaPrint.document.write('<p>Escaneie para ver os dados de emergência.</p>');
+            janelaPrint.document.write('</body></html>');
+            
+            janelaPrint.document.close();
+            
+            // Espera a imagem carregar na nova janela e manda imprimir
+            janelaPrint.onload = function() {
+                janelaPrint.focus();
+                janelaPrint.print();
+                // Opcional: fecha a janela depois que imprimir
+                // janelaPrint.close(); 
+            };
+        }
+
+        // Lógica do Modal de Exclusão (Mantida igual)
         function confirmarExclusao(nome, url) {
             document.getElementById('nomeExclusao').innerText = nome;
             document.getElementById('formExclusao').action = url;
             new bootstrap.Modal(document.getElementById('deleteModal')).show();
         }
-
-        // Lógica do Modal de QR Code
-        function mostrarQRCode(nome, urlRelativa) {
-            const dominio = window.location.protocol + "//" + window.location.host;
-            const urlCompleta = dominio + urlRelativa;
-
-            document.getElementById('qrNome').innerText = "Pulseira de " + nome;
-            document.getElementById('linkPublico').href = urlCompleta;
-
-            // API para gerar QR Code
-            const apiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(urlCompleta)}`;
-            document.getElementById('qrImage').src = apiUrl;
-
-            new bootstrap.Modal(document.getElementById('qrModal')).show();
-        }
     </script>
-
 </body>
 </html>
