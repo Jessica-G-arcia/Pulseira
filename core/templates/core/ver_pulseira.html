@@ -86,52 +86,20 @@
             margin-bottom: 4px;
         }
 
-        .box.medico {
-            border-left-color: #007bff;
-        }
+        .box.medico { border-left-color: #007bff; }
+        .box.alerta { border-left-color: #dc3545; background: #fff5f5; }
+        .box.calma { border-left-color: #28a745; background: #e8f5e97c; }
+        .box.convenio { border-left-color: #6f42c1; background: #f9f3fe; }
 
-        .box.alerta {
-            border-left-color: #dc3545;
-            background: #fff5f5;
-        }
+        details { cursor: pointer; text-align: left; }
+        summary { font-weight: normal; outline: none; color: #007bff; }
+        body>details { background: #eee; padding: 10px; border-radius: 8px; margin-top: 10px; }
+        .box details { margin-top: 5px; border-top: 1px solid #eee; padding-top: 10px; }
 
-        .box.calma {
-            border-left-color: #28a745;
-            background: #e8f5e97c;
-        }
-
-        .box.convenio {
-            border-left-color: #6f42c1;
-            background: #f9f3fe;
-        }
-
-        details {
-            cursor: pointer;
-            text-align: left;
-        }
-
-        summary {
-            font-weight: normal;
-            outline: none;
-            color: #007bff;
-        }
-
-        body>details {
-            background: #eee;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-
-        .box details {
-            margin-top: 5px;
-            border-top: 1px solid #eee;
-            padding-top: 10px;
-        }
-
+        /* BOTÃO LIGAR (VERDE ESCURO) */
         .btn-ligar {
             display: block;
-            background: #28a745;
+            background: #198754;
             color: white;
             padding: 16px;
             margin-bottom: 12px;
@@ -139,9 +107,26 @@
             border-radius: 50px;
             font-weight: bold;
             font-size: 18px;
-            margin-top: 20px;
             box-shadow: 0 4px 6px rgba(40, 167, 69, 0.3);
         }
+
+        /* BOTÃO WHATSAPP (VERDE CLARO PADRÃO) */
+        .btn-whatsapp {
+            display: block;
+            width: 100%;
+            background: #25D366; /* Cor oficial do WhatsApp */
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(37, 211, 102, 0.3);
+            text-decoration: none;
+        }
+        .btn-whatsapp:hover { opacity: 0.9; }
 
         .btn-gps {
             display: block;
@@ -185,53 +170,14 @@
         }
 
         @keyframes subir {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
-        .modal-titulo {
-            font-size: 20px;
-            font-weight: bold;
-            color: #d9534f;
-            margin-bottom: 10px;
-        }
-
-        .modal-texto {
-            font-size: 15px;
-            color: #555;
-            margin-bottom: 20px;
-            line-height: 1.4;
-        }
-
-        .btn-modal-sim {
-            background: #d9534f;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            width: 100%;
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
-
-        .btn-modal-nao {
-            background: transparent;
-            color: #777;
-            border: none;
-            padding: 10px;
-            font-size: 14px;
-            cursor: pointer;
-            text-decoration: underline;
-        }
+        .modal-titulo { font-size: 20px; font-weight: bold; color: #d9534f; margin-bottom: 10px; }
+        .modal-texto { font-size: 15px; color: #555; margin-bottom: 20px; line-height: 1.4; }
+        .btn-modal-sim { background: #d9534f; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; margin-bottom: 10px; }
+        .btn-modal-nao { background: transparent; color: #777; border: none; padding: 10px; font-size: 14px; cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 
@@ -330,6 +276,12 @@
         </div>
         {% endif %}
 
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+        <button onclick="enviarWhatsApp()" class="btn-whatsapp">
+            💬 AVISAR NO WHATSAPP
+        </button>
+
         <a href="tel:{{ pulseira.responsavel_telefone }}" class="btn-ligar">
             📞 LIGAR PARA FAMÍLIA
         </a>
@@ -351,15 +303,12 @@
             pegarLocalizacao();
         }
 
+        // --- SISTEMA DE NOTIFICAÇÃO SILENCIOSA (API) ---
         function pegarLocalizacao() {
             const botao = document.querySelector('.btn-gps');
             if (botao) botao.innerHTML = "⏳ Buscando satélites...";
 
-            const opcoes = {
-                enableHighAccuracy: true,
-                timeout: 15000,
-                maximumAge: 0
-            };
+            const opcoes = { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 };
 
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(enviarParaServidor, tratarErro, opcoes);
@@ -373,7 +322,6 @@
             const lon = posicao.coords.longitude;
             const precisao = posicao.coords.accuracy;
 
-            // Muda o botão para verde imediatamente como feedback
             const botao = document.querySelector('.btn-gps');
             if (botao) {
                 botao.style.background = "#28a745";
@@ -385,25 +333,64 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ latitude: lat, longitude: lon, precisao: precisao })
             })
-                .then(r => r.json())
-                .then(data => {
-                    // REMOVI O ALERT AQUI. 
-                    // Se deu certo, o botão já está verde e avisando. O usuário não precisa clicar em nada.
-                    if (data.status === 'sucesso') {
-                        console.log("Sucesso silencioso: Família notificada.");
-                    }
-                })
-                .catch(err => console.error("Erro ao enviar:", err));
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'sucesso') {
+                    console.log("Sucesso silencioso: Família notificada.");
+                }
+            })
+            .catch(err => console.error("Erro ao enviar:", err));
         }
 
         function tratarErro(erro) {
             const botao = document.querySelector('.btn-gps');
             if (botao) botao.innerHTML = "❌ Erro / Tentar Novamente";
-
-            // Só mostramos alerta se der ERRO, pois aí o usuário precisa saber
             alert("Não foi possível pegar a localização. Tente clicar no botão novamente.");
+        }
+
+        // --- SISTEMA DE WHATSAPP (NOVO) ---
+        function enviarWhatsApp() {
+            const btnZap = document.querySelector('.btn-whatsapp');
+            const textoOriginal = btnZap.innerHTML;
+            btnZap.innerHTML = "⏳ Gerando link...";
+
+            // Limpa o telefone (deixa só números)
+            const telefone = "{{ pulseira.responsavel_telefone }}".replace(/\D/g, '');
+            const nomeProtegido = "{{ pulseira.nome }}";
+
+            // Tenta pegar a localização
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    // SUCESSO: Manda com localização
+                    function(pos) {
+                        const lat = pos.coords.latitude;
+                        const lon = pos.coords.longitude;
+                        // Cria link do Google Maps
+                        const linkMaps = `https://maps.google.com/?q=${lat},${lon}`;
+                        
+                        const mensagem = `Olá! Encontrei o(a) ${nomeProtegido}. Minha localização atual é: ${linkMaps}`;
+                        
+                        // Abre WhatsApp (Adiciona 55 do Brasil se o número não tiver DDI)
+                        const url = `https://wa.me/55${telefone}?text=${encodeURIComponent(mensagem)}`;
+                        window.location.href = url;
+                        
+                        btnZap.innerHTML = textoOriginal;
+                    },
+                    // ERRO: Manda sem localização (Fallback)
+                    function(error) {
+                        const mensagem = `Olá! Encontrei o(a) ${nomeProtegido}. Por favor, entre em contato comigo.`;
+                        const url = `https://wa.me/55${telefone}?text=${encodeURIComponent(mensagem)}`;
+                        window.location.href = url;
+                        btnZap.innerHTML = textoOriginal;
+                    }
+                );
+            } else {
+                // Se o navegador não suportar GPS
+                const mensagem = `Olá! Encontrei o(a) ${nomeProtegido}. Por favor, entre em contato comigo.`;
+                const url = `https://wa.me/55${telefone}?text=${encodeURIComponent(mensagem)}`;
+                window.location.href = url;
+            }
         }
     </script>
 </body>
-
 </html>
