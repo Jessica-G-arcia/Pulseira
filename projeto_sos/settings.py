@@ -84,7 +84,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'JessicaGarcia1$sos',       # Nome que apareceu na aba Databases
         'USER': 'JessicaGarcia1',           # Seu usuário do PythonAnywhere
-        'PASSWORD': 'SUA_SENHA_DO_MYSQL',   # A senha que você criou na aba Databases
+        'PASSWORD': os.getenv('SENHA_DB'),   # A senha que você criou na aba Databases
         'HOST': 'JessicaGarcia1.mysql.pythonanywhere-services.com', # O endereço do Host
         'PORT': '3306',
         'OPTIONS': {
