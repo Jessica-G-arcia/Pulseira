@@ -86,3 +86,19 @@ class CadastroUsuarioForm(UserCreationForm):
                 defaults={'cpf': cpf_limpo, 'endereco': endereco_final}
             )
         return user
+    
+    class EditarUsuarioForm(forms.ModelForm):
+        class Meta:
+            model = User
+            fields = ['first_name', 'last_name', 'email']
+            labels = {
+                'first_name': 'Nome',
+                'last_name': 'Sobrenome',
+                'email': 'E-mail'
+            }
+        
+        # Adicionamos classes CSS para ficar bonito
+        def __init__(self, *args, **kwargs):
+            super(EditarUsuarioForm, self).__init__(*args, **kwargs)
+            for field in self.fields:
+                self.fields[field].widget.attrs.update({'class': 'form-control'})

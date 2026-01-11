@@ -13,6 +13,7 @@ urlpatterns = [
     path('cadastro-conta/', views.cadastro_usuario, name='cadastro_usuario'),
     path('login/', views.fazer_login, name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('meu-perfil/', views.editar_perfil, name='editar_perfil'),
     path('painel/', views.dashboard, name='dashboard'),
     path('adicionar-pulseira/', views.criar_pulseira, name='criar_pulseira'),
     path('editar-pulseira/<uuid:pulseira_id>/', views.editar_pulseira, name='editar_pulseira'),

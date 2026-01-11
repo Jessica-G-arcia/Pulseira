@@ -12,7 +12,7 @@ import json
 
 # Imports locais
 from .models import Pulseira
-from .forms import CadastroUsuarioForm, PulseiraForm
+from .forms import CadastroUsuarioForm, PulseiraForm, EditarUsuarioForm
 
 # ========================================================
 # 1. ÁREA DE AUTENTICAÇÃO (LOGIN / CADASTRO / LOGOUT)
@@ -59,6 +59,17 @@ def fazer_login(request):
 # ========================================================
 # 2. ÁREA RESTRITA (GERENCIAMENTO DE PULSEIRAS)
 # ========================================================
+@login_required
+def editar_perfil(request):
+    if request.method == 'POST':
+        form = EditarUsuarioForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    else:
+        form = EditarUsuarioForm(instance=request.user)
+        
+    return render(request, 'core/editar_perfil.html', {'form': form})
 
 @login_required(login_url='/login/')
 def dashboard(request):

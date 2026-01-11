@@ -169,18 +169,30 @@
                 <i class="bi bi-heart-pulse-fill"></i> Sistema SOS
             </a>
 
-            <div class="d-flex align-items-center gap-3">
-                <div class="d-none d-md-block text-end">
-                    <small class="text-muted d-block" style="font-size: 11px;">Logado como</small>
-                    <span class="fw-bold">{{ user.first_name|default:user.username }}</span>
-                </div>
-
-                <form action="{% url 'logout' %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3">
-                        <i class="bi bi-box-arrow-right"></i> Sair
-                    </button>
-                </form>
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle d-flex align-items-center gap-2 border" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle fs-5 text-secondary"></i>
+                    <span class="d-none d-md-inline fw-bold text-dark">{{ user.first_name|default:user.username }}</span>
+                </button>
+                
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                    <li>
+                        <a class="dropdown-item py-2" href="{% url 'editar_perfil' %}">
+                            <i class="bi bi-person-gear me-2"></i> Meus Dados
+                        </a>
+                    </li>
+                    
+                    <li><hr class="dropdown-divider"></li>
+                    
+                    <li>
+                        <form action="{% url 'logout' %}" method="post" class="m-0">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item py-2 text-danger">
+                                <i class="bi bi-box-arrow-right me-2"></i> Sair do Sistema
+                            </button>
+                        </form>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
