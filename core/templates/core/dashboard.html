@@ -4,12 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minhas Pulseiras</title>
+    <title>Painel - SOS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
     <style>
         body {
             background-color: #f4f6f9;
             font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
         }
 
         /* Navbar */
@@ -23,11 +26,9 @@
             font-weight: bold;
             color: #DD2476 !important;
             font-size: 22px;
-        }
-
-        /* Container principal */
-        .main-content {
-            padding: 40px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         /* Botão Adicionar */
@@ -35,7 +36,7 @@
             background: #28a745;
             color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 10px 25px;
             border-radius: 50px;
             font-weight: bold;
             display: inline-flex;
@@ -55,32 +56,22 @@
         /* Cartão da Pulseira */
         .pulseira-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 16px;
             padding: 20px;
             border: none;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s;
-
-            /* MUDANÇA AQUI: de flex para block ou flex-column */
+            transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
             flex-direction: column;
             gap: 15px;
-
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             border-left: 5px solid #DD2476;
-        }
-
-        .actions-footer {
-            border-top: 1px solid #eee;
-            /* Linha sutil separando o botão */
-            padding-top: 15px;
-            text-align: right;
-            /* Alinha o botão à direita */
+            height: 100%;
         }
 
         .pulseira-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
 
         .foto-preview {
@@ -88,7 +79,8 @@
             height: 70px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid #f0f0f0;
+            border: 3px solid #f8f9fa;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .info h4 {
@@ -100,53 +92,71 @@
 
         .info p {
             margin: 0;
-            font-size: 13px;
-            color: #888;
-        }
-
-        .actions {
-            margin-left: auto;
-        }
-
-        .btn-ver {
-            background: #e9ecef;
-            color: #333;
-            padding: 8px 15px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .btn-ver:hover {
-            background: #dee2e6;
-        }
-
-        /* Estilo do botão ocupando a linha toda ou destaque */
-        .btn-ver-bloco {
-            display: inline-block;
-            background: #f8f9fa;
-            color: #333;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
             font-size: 14px;
-            font-weight: 600;
-            transition: all 0.2s;
-            border: 1px solid #ddd;
+            color: #777;
         }
 
-        .btn-ver-bloco:hover {
-            background: #DD2476;
-            color: white;
-            border-color: #DD2476;
+        /* Footer do Card com Botões */
+        .actions-footer {
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            gap: 5px;
         }
+
+        .btn-icon {
+            border: none;
+            background: #f8f9fa;
+            color: #555;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-icon:hover {
+            background: #e2e6ea;
+            color: #333;
+        }
+
+        .btn-icon.view { color: #007bff; background: #e7f1ff; }
+        .btn-icon.view:hover { background: #007bff; color: white; }
+
+        .btn-icon.qr { color: #6f42c1; background: #f3e5f5; }
+        .btn-icon.qr:hover { background: #6f42c1; color: white; }
+
+        .btn-icon.edit { color: #ffc107; background: #fff8e1; }
+        .btn-icon.edit:hover { background: #ffc107; color: black; }
+
+        .btn-icon.del { color: #dc3545; background: #ffebee; }
+        .btn-icon.del:hover { background: #dc3545; color: white; }
 
         /* Estado vazio */
         .empty-state {
             text-align: center;
-            padding: 50px;
+            padding: 60px 20px;
             color: #999;
+        }
+
+        .empty-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            display: block;
+            opacity: 0.3;
+        }
+
+        /* Modal QR Code */
+        .qr-img {
+            width: 100%;
+            max-width: 250px;
+            margin: 0 auto;
+            display: block;
         }
     </style>
 </head>
@@ -155,65 +165,164 @@
 
     <nav class="navbar">
         <div class="container d-flex justify-content-between align-items-center">
-            <span class="navbar-brand">🆘 Sistema SOS</span>
+            <a href="{% url 'dashboard' %}" class="navbar-brand text-decoration-none">
+                <i class="bi bi-heart-pulse-fill"></i> Sistema SOS
+            </a>
+
             <div class="d-flex align-items-center gap-3">
-                <span class="d-none d-md-block text-muted">Olá, {{ user.username }}</span>
+                <div class="d-none d-md-block text-end">
+                    <small class="text-muted d-block" style="font-size: 11px;">Logado como</small>
+                    <span class="fw-bold">{{ user.first_name|default:user.username }}</span>
+                </div>
+
                 <form action="{% url 'logout' %}" method="post">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-outline-danger btn-sm">Sair</button>
+                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                        <i class="bi bi-box-arrow-right"></i> Sair
+                    </button>
                 </form>
             </div>
         </div>
     </nav>
 
-    <div class="container main-content">
+    <div class="container" style="padding-top: 40px; padding-bottom: 40px;">
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="m-0">Meus Protegidos</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div>
+                <h2 class="m-0 fw-bold text-dark">Meus Protegidos</h2>
+                <p class="text-muted m-0">Gerencie as pulseiras e dados de emergência</p>
+            </div>
             <a href="{% url 'criar_pulseira' %}" class="btn-add">
-                + Nova Pulseira
+                <i class="bi bi-plus-lg"></i> Nova Pulseira
             </a>
         </div>
 
         <div class="row">
-            
+
             {% for pulseira in pulseiras %}
             <div class="col-md-6 col-lg-4">
                 <div class="pulseira-card">
                     <div class="d-flex align-items-center gap-3 w-100">
                         {% if pulseira.foto %}
-                            <img src="{{ pulseira.foto.url }}" class="foto-preview">
+                        <img src="{{ pulseira.foto.url }}" class="foto-preview">
                         {% else %}
-                            <div class="foto-preview d-flex align-items-center justify-content-center bg-light text-muted">
-                                📷
-                            </div>
+                        <div class="foto-preview d-flex align-items-center justify-content-center bg-light text-secondary fs-4">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
                         {% endif %}
 
                         <div class="info">
                             <h4>{{ pulseira.nome }}</h4>
-                            <p>Idade: {{ pulseira.idade }} anos</p>
-                            <p class="text-success small">● Ativo</p>
+                            <p class="mb-1"><i class="bi bi-cake2"></i> {{ pulseira.idade }} anos</p>
+
+                            {% if pulseira.responsavel_email %}
+                            <small class="text-success"><i class="bi bi-check-circle-fill"></i> Email ativo</small>
+                            {% else %}
+                            <small class="text-warning"><i class="bi bi-exclamation-triangle-fill"></i> Sem email</small>
+                            {% endif %}
                         </div>
                     </div>
 
                     <div class="actions-footer">
-                        <a href="{% url 'visualizar_pulseira' pulseira.id %}" target="_blank" class="btn-ver-bloco">
-                            Ver Perfil Completo
+                        
+                        <a href="{% url 'visualizar_pulseira' pulseira.id %}" target="_blank" class="btn-icon view" title="Ver Página Pública">
+                            <i class="bi bi-eye-fill"></i>
                         </a>
+
+                        <button onclick="mostrarQRCode('{{ pulseira.nome }}', '{% url "visualizar_pulseira" pulseira.id %}')" class="btn-icon qr" title="Ver QR Code">
+                            <i class="bi bi-qr-code"></i>
+                        </button>
+
+                        <a href="{% url 'editar_pulseira' pulseira.id %}" class="btn-icon edit" title="Editar Dados">
+                            <i class="bi bi-pencil-fill"></i>
+                        </a>
+
+                        <button onclick="confirmarExclusao('{{ pulseira.nome }}', '{% url "excluir_pulseira" pulseira.id %}')" class="btn-icon del" title="Excluir">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+
                     </div>
                 </div>
             </div>
 
             {% empty %}
             <div class="col-12 empty-state">
-                <h3>Nenhuma pulseira cadastrada 😢</h3>
-                <p>Clique no botão verde acima para cadastrar a primeira.</p>
+                <i class="bi bi-emoji-frown empty-icon"></i>
+                <h3>Você ainda não tem pulseiras cadastradas.</h3>
+                <p>Clique no botão verde acima para adicionar a primeira pessoa protegida.</p>
             </div>
             {% endfor %}
 
-        </div> </div>
+        </div>
     </div>
 
-</body>
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger fw-bold">Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja excluir a pulseira de <strong id="nomeExclusao"></strong>?</p>
+                    <p class="small text-muted">Essa ação não pode ser desfeita e o QR Code deixará de funcionar.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form id="formExclusao" method="post" action="">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Sim, Excluir</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    <h5 class="fw-bold mb-3" id="qrNome"></h5>
+                    <div class="bg-light p-3 rounded mb-3 d-inline-block border">
+                        <img id="qrImage" src="" alt="QR Code" class="qr-img">
+                    </div>
+                    <p class="small text-muted">Aponte a câmera do celular ou imprima este código.</p>
+                    <a id="linkPublico" href="#" target="_blank" class="btn btn-outline-primary btn-sm mt-2">
+                        <i class="bi bi-box-arrow-up-right"></i> Abrir Link
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Lógica do Modal de Exclusão
+        function confirmarExclusao(nome, url) {
+            document.getElementById('nomeExclusao').innerText = nome;
+            document.getElementById('formExclusao').action = url;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+
+        // Lógica do Modal de QR Code
+        function mostrarQRCode(nome, urlRelativa) {
+            const dominio = window.location.protocol + "//" + window.location.host;
+            const urlCompleta = dominio + urlRelativa;
+
+            document.getElementById('qrNome').innerText = "Pulseira de " + nome;
+            document.getElementById('linkPublico').href = urlCompleta;
+
+            // API para gerar QR Code
+            const apiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(urlCompleta)}`;
+            document.getElementById('qrImage').src = apiUrl;
+
+            new bootstrap.Modal(document.getElementById('qrModal')).show();
+        }
+    </script>
+
+</body>
 </html>

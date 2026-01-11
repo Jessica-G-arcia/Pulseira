@@ -15,7 +15,7 @@ from .models import Pulseira
 from .forms import CadastroUsuarioForm, PulseiraForm
 
 # ========================================================
-# ÁREA DE AUTENTICAÇÃO (LOGIN / CADASTRO DE DONO)
+# 1. ÁREA DE AUTENTICAÇÃO (LOGIN / CADASTRO / LOGOUT)
 # ========================================================
 
 def cadastro_usuario(request):
@@ -33,17 +33,18 @@ def cadastro_usuario(request):
     return render(request, 'registration/cadastro_usuario.html', {'form': form})
 
 def fazer_login(request):
+    """Faz o login aplicando o CSS correto nos campos"""
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             user = form.get_user()
             auth_login(request, user)
             return redirect('dashboard')
-        # Se cair aqui, é porque o formulário tem erros (usuário/senha inválidos)
+        # Se cair aqui, é porque o formulário tem erros
     else:
         form = AuthenticationForm()
 
-    # ESSA PARTE É A CHAVE: Aplica o CSS em ambos os casos (erro ou início)
+    # Configura placeholders e CSS para o template (mesmo em caso de erro)
     form.fields['username'].widget.attrs.update({
         'class': 'form-control', 
         'placeholder': 'Digite o seu CPF ou e-mail'
@@ -56,12 +57,13 @@ def fazer_login(request):
     return render(request, 'registration/login.html', {'form': form})
 
 # ========================================================
-# ÁREA RESTRITA (SOMENTE DONO LOGADO)
+# 2. ÁREA RESTRITA (GERENCIAMENTO DE PULSEIRAS)
 # ========================================================
 
 @login_required(login_url='/login/')
 def dashboard(request):
-    """Painel principal do usuário logado"""
+    """Painel principal: Lista as pulseiras do usuário logado"""
+    # Filtra apenas as pulseiras criadas por este usuário
     minhas_pulseiras = Pulseira.objects.filter(usuario=request.user)
     return render(request, 'core/dashboard.html', {'pulseiras': minhas_pulseiras})
 
@@ -72,7 +74,7 @@ def criar_pulseira(request):
         form = PulseiraForm(request.POST, request.FILES)
         if form.is_valid():
             nova_pulseira = form.save(commit=False)
-            nova_pulseira.usuario = request.user
+            nova_pulseira.usuario = request.user # Vincula ao dono logado
             nova_pulseira.save()
             return redirect('dashboard')
     else:
@@ -80,14 +82,43 @@ def criar_pulseira(request):
     
     return render(request, 'core/cadastro.html', {'form': form})
 
+@login_required(login_url='/login/')
+def editar_pulseira(request, pulseira_id):
+    """Edita os dados de uma pulseira existente"""
+    # get_object_or_404 com usuario=request.user garante que ninguém edite a pulseira de outro
+    pulseira = get_object_or_404(Pulseira, id=pulseira_id, usuario=request.user)
+
+    if request.method == 'POST':
+        # instance=pulseira diz ao formulário para atualizar este item, não criar um novo
+        form = PulseiraForm(request.POST, request.FILES, instance=pulseira)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    else:
+        # Preenche o formulário com os dados atuais do banco
+        form = PulseiraForm(instance=pulseira)
+
+    return render(request, 'core/editar_pulseira.html', {'form': form, 'pulseira': pulseira})
+
+@login_required(login_url='/login/')
+def excluir_pulseira(request, pulseira_id):
+    """Exclui uma pulseira (opcional, requer url configurada)"""
+    pulseira = get_object_or_404(Pulseira, id=pulseira_id, usuario=request.user)
+    if request.method == 'POST':
+        pulseira.delete()
+        return redirect('dashboard')
+    # Se tentar acessar via GET, mandamos de volta para o dashboard por segurança
+    return redirect('dashboard')
+
 # ========================================================
-# ÁREA PÚBLICA (QR CODE E EMERGÊNCIA)
+# 3. ÁREA PÚBLICA (QR CODE E EMERGÊNCIA)
 # ========================================================
 
 def visualizar_pulseira(request, pulseira_id):
-    """Página acessada publicamente (ex: via QR Code)"""
+    """Página pública acessada via QR Code"""
     pulseira = get_object_or_404(Pulseira, id=pulseira_id)
     
+    # Verifica se o usuário aceitou os termos de privacidade
     if not pulseira.aceite_termos:
        return render(request, 'erro_privacidade.html', status=403)
     
@@ -97,7 +128,7 @@ def visualizar_pulseira(request, pulseira_id):
 
 @csrf_exempt
 def api_notificar(request, pulseira_id):
-    """Recebe localização GPS e notifica o responsável por e-mail"""
+    """API: Recebe GPS e envia e-mail de alerta"""
     if request.method == "POST":
         try:
             dados = json.loads(request.body)
@@ -108,7 +139,7 @@ def api_notificar(request, pulseira_id):
             if not pulseira.responsavel_email:
                 return JsonResponse({'status': 'erro', 'msg': 'Sem email cadastrado'})
 
-            # Geocoding Reverso (GPS -> Endereço)
+            # Tenta converter GPS em Endereço (Rua, Bairro...)
             endereco = "Endereço aproximado (GPS)"
             try:
                 geolocator = Nominatim(user_agent="sistema_sos_v1_jessica")
@@ -116,7 +147,7 @@ def api_notificar(request, pulseira_id):
                 if local:
                     endereco = local.address
             except:
-                pass
+                pass # Se falhar, manda só o link do mapa
 
             # Disparo de E-mail
             assunto = f"🚨 ALERTA SOS: {pulseira.nome} foi encontrado(a)!"
