@@ -88,6 +88,15 @@ class CadastroUsuarioForm(UserCreationForm):
         return user
     
 class EditarUsuarioForm(forms.ModelForm):
+    # Campo CPF (Apenas Leitura - não deixa mudar para não quebrar o login)
+    cpf_display = forms.CharField(label='CPF', required=False, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    
+    # Campos de Endereço (Opcionais - só preenche se quiser mudar)
+    cep = forms.CharField(label='Atualizar CEP', max_length=9, required=False)
+    logradouro = forms.CharField(label='Rua/Avenida', required=False)
+    numero = forms.CharField(label='Número', required=False)
+    bairro_cidade = forms.CharField(label='Bairro / Cidade', required=False)
+
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email']
@@ -96,9 +105,38 @@ class EditarUsuarioForm(forms.ModelForm):
             'last_name': 'Sobrenome',
             'email': 'E-mail'
         }
-        
-    # Adicionamos classes CSS para ficar bonito
+    
     def __init__(self, *args, **kwargs):
         super(EditarUsuarioForm, self).__init__(*args, **kwargs)
+        
+        # Aplica CSS do Bootstrap em todos os campos
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
+            
+        # Tenta preencher o CPF com os dados do Perfil
+        if self.instance.pk:
+            try:
+                perfil = self.instance.perfil  # Tenta acessar a relação OneToOne
+                self.fields['cpf_display'].initial = perfil.cpf
+                
+                # Se quiser mostrar o endereço atual como "dica" no placeholder
+                self.fields['logradouro'].widget.attrs.update({'placeholder': perfil.endereco})
+            except:
+                pass
+
+    def save(self, commit=True):
+        user = super().save(commit=commit)
+        
+        # Se o usuário preencheu o CEP e Logradouro, atualizamos o endereço no Perfil
+        if self.cleaned_data.get('cep') and self.cleaned_data.get('logradouro'):
+            novo_endereco = f"CEP: {self.cleaned_data['cep']}, {self.cleaned_data['logradouro']}, {self.cleaned_data['numero']} - {self.cleaned_data['bairro_cidade']}"
+            
+            # Salva no Perfil
+            if hasattr(user, 'perfil'):
+                user.perfil.endereco = novo_endereco
+                user.perfil.save()
+            else:
+                # Caso raro de usuário sem perfil
+                Perfil.objects.create(user=user, cpf=user.username, endereco=novo_endereco)
+                
+        return user
