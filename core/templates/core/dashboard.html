@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel - SOS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -64,9 +65,17 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            margin-bottom: 25px;
+            /* Margem padrão */
+            margin-bottom: 25px; 
             border-left: 5px solid #DD2476;
             height: 100%;
+        }
+
+        /* --- CORREÇÃO MOBILE: Aumenta o espaço no celular --- */
+        @media (max-width: 768px) {
+            .pulseira-card {
+                margin-bottom: 50px !important; /* Força mais espaço entre os cards */
+            }
         }
 
         .pulseira-card:hover {
@@ -79,7 +88,7 @@
             height: 70px;
             border-radius: 50%;
             object-fit: cover;
-            object-position: top;
+            object-position: top; /* Garante que não corte a cabeça na foto */
             border: 3px solid #f8f9fa;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
@@ -213,7 +222,7 @@
         <div class="row">
 
             {% for pulseira in pulseiras %}
-            <div class="col-md-6 col-lg-4">
+            <div class="col-md-6 col-lg-4 mb-4">
                 <div class="pulseira-card">
                     <div class="d-flex align-items-center gap-3 w-100">
                         {% if pulseira.foto %}

@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
@@ -184,3 +185,11 @@ def api_notificar(request, pulseira_id):
 def termos_uso(request):
     """Exibe a página de termos de uso"""
     return render(request, 'core/termos.html')
+
+def robots_txt(request):
+    """Diz aos robôs de busca para não indexarem nada do site"""
+    linhas = [
+        "User-agent: *",  # Para todos os robôs (Google, Bing, Yahoo...)
+        "Disallow: /",    # Bloqueie TUDO a partir da raiz
+    ]
+    return HttpResponse("\n".join(linhas), content_type="text/plain")
