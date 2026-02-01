@@ -171,3 +171,37 @@ class Pedido(models.Model):
 
     def __str__(self):
         return f"Pedido {self.id} - {self.usuario.username}"
+    
+    # --- SISTEMA DE LOJA ---
+
+class Produto(models.Model):
+    TIPO_CHOICES = (
+        ('digital', 'Apenas QR Code (Digital)'),
+        ('fisico', 'Produto Físico (Adesivo/Resina)'),
+    )
+    nome = models.CharField(max_length=100)
+    preco = models.DecimalField(max_digits=10, decimal_places=2) # Ex: 39.90
+    descricao = models.TextField(blank=True)
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES, default='fisico')
+    imagem_url = models.CharField(max_length=200, blank=True, null=True, help_text="Cole o link de uma imagem ou ícone aqui")
+
+    def __str__(self):
+        return f"{self.nome} - R$ {self.preco}"
+
+class Pedido(models.Model):
+    STATUS_CHOICES = (
+        ('pendente', 'Pendente'),
+        ('aprovado', 'Pago / Aprovado'),
+        ('enviado', 'Enviado'),
+        ('cancelado', 'Cancelado'),
+    )
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    produto = models.ForeignKey(Produto, on_delete=models.PROTECT)
+    data_pedido = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
+    
+    # ID da transação no Mercado Pago (para conferência futura)
+    id_transacao = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f"Pedido #{self.id} - {self.usuario.username} ({self.status})"

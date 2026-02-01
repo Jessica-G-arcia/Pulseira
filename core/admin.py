@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
-from .models import Pulseira, Perfil
+from .models import Pulseira, Perfil, Produto, Pedido
 
 # ==================================================
 # 1. VISUALIZAÇÃO DENTRO DO USUÁRIO (INLINES)
@@ -102,3 +102,16 @@ admin.site.register(User, UserAdmin)
 class PerfilAdmin(admin.ModelAdmin):
     list_display = ('user', 'cpf', 'endereco')
     search_fields = ('user__username', 'cpf')
+
+
+@admin.register(Produto)
+class ProdutoAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'tipo', 'preco')
+    search_fields = ('nome',)
+
+@admin.register(Pedido)
+class PedidoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'usuario', 'produto', 'data_pedido', 'status')
+    list_filter = ('status', 'data_pedido')
+    search_fields = ('usuario__username', 'usuario__email')
+    readonly_fields = ('data_pedido',)
