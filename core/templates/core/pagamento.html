@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 text-center" style="max-width: 600px;">
+    <div class="card shadow p-5">
+        <h2 class="mb-4">Resumo do Pedido #{{ pedido.id }}</h2>
+        
+        <div class="alert alert-info">
+            <h4>Produto: {{ pedido.produto.nome }}</h4>
+            <h1 class="display-4 text-primary">R$ {{ pedido.produto.preco }}</h1>
+        </div>
+
+        <p class="text-muted">
+            Neste momento, estamos em modo de simulação via Pix.<br>
+            Ao clicar abaixo, o sistema fingirá que o banco aprovou.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success btn-lg w-100 mt-3">
+                ✅ Simular Pagamento Aprovado
+            </button>
+        </form>
+        
+        <a href="{% url 'loja_produtos' %}" class="btn btn-link mt-3 text-muted">Cancelar</a>
+    </div>
+</div>
+{% endblock %}

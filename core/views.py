@@ -12,7 +12,7 @@ from geopy.geocoders import Nominatim
 import json
 
 # Imports locais
-from .models import Pulseira
+from .models import Pulseira, Perfil, Produto, Pedido
 from .forms import CadastroUsuarioForm, PulseiraForm, EditarUsuarioForm
 
 # ========================================================
@@ -216,4 +216,41 @@ def robots_txt(request):
     return HttpResponse("\n".join(linhas), content_type="text/plain")
 
 def loja_produtos(request):
-    return render(request, 'core/loja.html')
+    """Exibe os produtos cadastrados no banco"""
+    produtos = Produto.objects.all().order_by('preco')
+    return render(request, 'core/loja.html', {'produtos': produtos})
+
+@login_required
+def iniciar_compra(request, produto_id):
+    """Cria um pedido pendente e leva para o pagamento"""
+    produto = get_object_or_404(Produto, id=produto_id)
+    
+    # Cria o registro do pedido
+    pedido = Pedido.objects.create(
+        usuario=request.user,
+        produto=produto,
+        status='pendente'
+    )
+    
+    # Por enquanto, redirecionamos para uma tela de 'Simulação de Pagamento'
+    # Futuramente, aqui entrará o redirecionamento do Mercado Pago
+    return redirect('pagamento_simulado', pedido_id=pedido.id)
+
+@login_required
+def pagamento_simulado(request, pedido_id):
+    """Tela temporária para simular o pagamento"""
+    pedido = get_object_or_404(Pedido, id=pedido_id, usuario=request.user)
+    
+    if request.method == 'POST':
+        # SIMULA O PAGAMENTO APROVADO
+        pedido.status = 'aprovado'
+        pedido.save()
+        
+        # Adiciona o crédito ao usuário
+        perfil = request.user.perfil
+        perfil.creditos_pulseira += 1
+        perfil.save()
+        
+        return redirect('dashboard')
+        
+    return render(request, 'core/pagamento.html', {'pedido': pedido})

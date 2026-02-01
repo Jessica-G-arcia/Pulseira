@@ -172,48 +172,39 @@
 
     <div class="pricing-grid">
         
-        <div class="pricing-card">
-            <div class="card-icon">🖨️</div>
-            <div class="card-title">Digital (DIY)</div>
-            <div class="card-price">R$ 19,90 <span>/único</span></div>
-            <ul class="card-features">
-                <li>1 Crédito de Cadastro</li>
-                <li>Geração de QR Code</li>
-                <li>Perfil Online Vitalício</li>
-                <li>Imprima você mesmo</li>
-                <li>Sem envio físico</li>
-            </ul>
-            <button class="btn-comprar btn-basic">Selecionar</button>
-        </div>
+        {% for p in produtos %}
+        <div class="pricing-card {% if forloop.counter == 2 %}destaque{% endif %}">
+            
+            {% if forloop.counter == 2 %}
+                <div class="badge-destaque">MAIS POPULAR</div>
+            {% endif %}
 
-        <div class="pricing-card destaque">
-            <div class="badge-destaque">MAIS POPULAR</div>
-            <div class="card-icon">🏷️</div>
-            <div class="card-title">Kit Adesivos NFC</div>
-            <div class="card-price">R$ 39,90 <span>+ frete</span></div>
-            <ul class="card-features">
-                <li>1 Crédito de Cadastro</li>
-                <li>1 Adesivo NFC</li>
-                <li>Adesivo Resistente à Água</li>
-                <li>Tecnologia NFC + QR Code</li>
-                <li>Perfil Online Vitalício</li>
-            </ul>
-            <button class="btn-comprar btn-primary">Comprar Kit</button>
-        </div>
+            <div class="card-icon">
+                {% if "Digital" in p.nome %}🖨️
+                {% elif "Adesivo" in p.nome %}🏷️
+                {% else %}💎{% endif %}
+            </div>
 
-        <div class="pricing-card">
-            <div class="card-icon">💎</div>
-            <div class="card-title">Peça em Resina</div>
-            <div class="card-price">R$ 69,90 <span>+ frete</span></div>
+            <div class="card-title">{{ p.nome }}</div>
+            <div class="card-price">R$ {{ p.preco }}</div>
+            
             <ul class="card-features">
                 <li>1 Crédito de Cadastro</li>
-                <li>1 Pulseira, Colar ou Chaveiro</li>
-                <li>Acabamento Premium</li>
-                <li>À prova d'água</li>
-                <li>NFC + QR Code Integrados</li>
+                <li>Perfil Online Vitalício</li>
+                {% if p.tipo == 'fisico' %}
+                    <li>Envio pelos Correios</li>
+                    <li>Produto Físico</li>
+                {% else %}
+                    <li>Entrega Imediata</li>
+                    <li>Faça você mesmo</li>
+                {% endif %}
             </ul>
-            <button class="btn-comprar btn-premium">Personalizar</button>
+
+            <a href="{% url 'iniciar_compra' p.id %}" class="btn-comprar {% if forloop.counter == 2 %}btn-primary{% elif forloop.counter == 3 %}btn-premium{% else %}btn-basic{% endif %}">
+                Comprar
+            </a>
         </div>
+        {% endfor %}
 
     </div>
 </div>
