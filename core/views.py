@@ -220,23 +220,50 @@ def loja_produtos(request):
     produtos = Produto.objects.all().order_by('preco')
     return render(request, 'core/loja.html', {'produtos': produtos})
 
-@login_required
+@login_required(login_url='/login/')
 def iniciar_compra(request, produto_id):
-    """Cria um pedido pendente e leva para o pagamento"""
     produto = get_object_or_404(Produto, id=produto_id)
     
-    # Cria o registro do pedido
+    # 1. Cria o pedido no banco
     pedido = Pedido.objects.create(
         usuario=request.user,
         produto=produto,
         status='pendente'
     )
+
+    # 2. DISPARA A NOTIFICAÇÃO (NOVO CÓDIGO)
+    assunto = f"💰 Nova Venda: {produto.nome} (Pedido #{pedido.id})"
     
-    # Por enquanto, redirecionamos para uma tela de 'Simulação de Pagamento'
-    # Futuramente, aqui entrará o redirecionamento do Mercado Pago
+    mensagem = f"""
+    NOVO PEDIDO RECEBIDO!
+    ---------------------------------------------
+    📦 Produto: {produto.nome}
+    💲 Valor: R$ {produto.preco}
+    👤 Cliente: {request.user.first_name} {request.user.last_name}
+    📧 Email: {request.user.email}
+    📅 Data: {pedido.data_pedido.strftime('%d/%m/%Y às %H:%M')}
+    ---------------------------------------------
+    
+    Link para gerenciar:
+    https://jessicagarcia1.pythonanywhere.com/admin/core/pedido/{pedido.id}/change/
+    """
+
+    try:
+        send_mail(
+            subject=assunto,
+            message=mensagem,
+            from_email=settings.EMAIL_HOST_USER,  # Usa o e-mail configurado
+            recipient_list=[settings.EMAIL_HOST_USER], # Envia para você mesma
+            fail_silently=True, # Se der erro no email, não trava a venda
+        )
+    except Exception as e:
+        # Apenas para você ver no console se der erro (opcional)
+        print(f"Erro ao enviar e-mail: {e}")
+
+    # 3. Segue o fluxo normal
     return redirect('pagamento_simulado', pedido_id=pedido.id)
 
-@login_required
+@login_required(login_url='/login/')
 def pagamento_simulado(request, pedido_id):
     """Tela temporária para simular o pagamento"""
     pedido = get_object_or_404(Pedido, id=pedido_id, usuario=request.user)
