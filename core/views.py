@@ -14,6 +14,8 @@ import json
 # Imports locais
 from .models import Pulseira, Perfil, Produto, Pedido
 from .forms import CadastroUsuarioForm, PulseiraForm, EditarUsuarioForm
+# Importe a função que acabamos de criar
+from .correios_util import calcular_frete_real
 
 # ========================================================
 # 1. ÁREA DE AUTENTICAÇÃO (LOGIN / CADASTRO / LOGOUT)
@@ -281,3 +283,29 @@ def pagamento_simulado(request, pedido_id):
         return redirect('dashboard')
         
     return render(request, 'core/pagamento.html', {'pedido': pedido})
+
+@login_required(login_url='/login/')
+def calcular_frete(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id=pedido_id, usuario=request.user)
+    opcoes_frete = []
+    cep_destino = request.POST.get('cep', '')
+
+    if request.method == 'POST' and cep_destino:
+        # SEU CEP DE ORIGEM (Coloque o seu de verdade aqui)
+        cep_origem = '18053031' 
+        
+        # Chama nossa função manual
+        opcoes_frete = calcular_frete_real(
+            cep_origem=cep_origem,
+            cep_destino=cep_destino,
+            peso_g=pedido.produto.peso_g,
+            comp=pedido.produto.comprimento_cm,
+            alt=pedido.produto.altura_cm,
+            larg=pedido.produto.largura_cm
+        )
+
+    return render(request, 'core/frete.html', {
+        'pedido': pedido, 
+        'opcoes': opcoes_frete, 
+        'cep_informado': cep_destino
+    })
