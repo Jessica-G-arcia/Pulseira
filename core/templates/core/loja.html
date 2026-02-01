@@ -1,4 +1,221 @@
-<h1>Escolha seu plano</h1>
-<p>Você precisa comprar créditos para cadastrar pulseiras.</p>
-<button>Comprar 1 Crédito (Simulação)</button>
-<a href="{% url 'dashboard' %}">Voltar</a>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    /* --- ESTILOS DA LOJA (CSS) --- */
+    .loja-container {
+        max_width: 1200px;
+        margin: 50px auto;
+        padding: 0 20px;
+        text-align: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .loja-header h2 {
+        font-size: 2.5rem;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+
+    .loja-header p {
+        color: #7f8c8d;
+        font-size: 1.1rem;
+        margin-bottom: 50px;
+    }
+
+    /* Grid dos Produtos */
+    .pricing-grid {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    /* O Cartão do Produto */
+    .pricing-card {
+        background: white;
+        border-radius: 15px;
+        width: 300px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pricing-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+
+    /* Destaque para o produto principal */
+    .pricing-card.destaque {
+        border: 2px solid #3498db;
+    }
+
+    .badge-destaque {
+        background: #3498db;
+        color: white;
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 5px 15px;
+        font-size: 0.8rem;
+        border-radius: 0 0 10px 10px;
+        font-weight: bold;
+    }
+
+    /* Conteúdo do Card */
+    .card-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+    }
+
+    .card-title {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: #34495e;
+        margin-bottom: 10px;
+    }
+
+    .card-price {
+        font-size: 2.2rem;
+        color: #2c3e50;
+        font-weight: 800;
+        margin-bottom: 20px;
+    }
+
+    .card-price span {
+        font-size: 1rem;
+        color: #95a5a6;
+        font-weight: normal;
+    }
+
+    /* Lista de Vantagens */
+    .card-features {
+        list-style: none;
+        padding: 0;
+        text-align: left;
+        margin-bottom: 30px;
+        flex-grow: 1; /* Empurra o botão para baixo */
+    }
+
+    .card-features li {
+        margin-bottom: 12px;
+        color: #555;
+        font-size: 0.95rem;
+    }
+
+    .card-features li::before {
+        content: "✔";
+        color: #2ecc71;
+        margin-right: 10px;
+        font-weight: bold;
+    }
+
+    /* Botão de Compra */
+    .btn-comprar {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-basic {
+        background-color: #ecf0f1;
+        color: #2c3e50;
+    }
+    
+    .btn-basic:hover { background-color: #dce4e6; }
+
+    .btn-primary {
+        background-color: #3498db;
+        color: white;
+    }
+
+    .btn-primary:hover { background-color: #2980b9; }
+
+    .btn-premium {
+        background: linear-gradient(45deg, #8e44ad, #c0392b);
+        color: white;
+    }
+
+    .btn-premium:hover { opacity: 0.9; }
+
+    /* Responsivo para celular */
+    @media (max-width: 768px) {
+        .pricing-grid {
+            flex-direction: column;
+            align-items: center;
+        }
+        .pricing-card {
+            width: 100%;
+            max-width: 350px;
+        }
+    }
+</style>
+
+<div class="loja-container">
+    <div class="loja-header">
+        <h2>Escolha sua proteção</h2>
+        <p>Adquira créditos e cadastre suas pulseiras SOS agora mesmo.</p>
+    </div>
+
+    <div class="pricing-grid">
+        
+        <div class="pricing-card">
+            <div class="card-icon">🖨️</div>
+            <div class="card-title">Digital (DIY)</div>
+            <div class="card-price">R$ 19,90 <span>/único</span></div>
+            <ul class="card-features">
+                <li>1 Crédito de Cadastro</li>
+                <li>Geração de QR Code</li>
+                <li>Perfil Online Vitalício</li>
+                <li>Imprima você mesmo</li>
+                <li>Sem envio físico</li>
+            </ul>
+            <button class="btn-comprar btn-basic">Selecionar</button>
+        </div>
+
+        <div class="pricing-card destaque">
+            <div class="badge-destaque">MAIS POPULAR</div>
+            <div class="card-icon">🏷️</div>
+            <div class="card-title">Kit Adesivos NFC</div>
+            <div class="card-price">R$ 39,90 <span>+ frete</span></div>
+            <ul class="card-features">
+                <li>1 Crédito de Cadastro</li>
+                <li>2 Adesivos Resinados</li>
+                <li>Tecnologia NFC + QR Code</li>
+                <li>Cole no capacete ou celular</li>
+                <li>Perfil Online Vitalício</li>
+            </ul>
+            <button class="btn-comprar btn-primary">Comprar Kit</button>
+        </div>
+
+        <div class="pricing-card">
+            <div class="card-icon">💎</div>
+            <div class="card-title">Peça em Resina</div>
+            <div class="card-price">R$ 69,90 <span>+ frete</span></div>
+            <ul class="card-features">
+                <li>1 Crédito de Cadastro</li>
+                <li>Pulseira, Colar ou Chaveiro</li>
+                <li>Acabamento Premium</li>
+                <li>À prova d'água</li>
+                <li>NFC + QR Code Integrados</li>
+            </ul>
+            <button class="btn-comprar btn-premium">Personalizar</button>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
