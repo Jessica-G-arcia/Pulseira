@@ -19,6 +19,7 @@ urlpatterns = [
     path('editar-pulseira/<uuid:pulseira_id>/', views.editar_pulseira, name='editar_pulseira'),
     path('excluir-pulseira/<uuid:pulseira_id>/', views.excluir_pulseira, name='excluir_pulseira'),
     path('termos/', views.termos_uso, name='termos_uso'),
+    path('loja/', views.loja_produtos, name='loja_produtos'),
     path('robots.txt', views.robots_txt),
 
     # --- FLUXO DE ESQUECI A SENHA (CORRIGIDO) ---

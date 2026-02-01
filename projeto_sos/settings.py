@@ -68,20 +68,34 @@ WSGI_APPLICATION = 'projeto_sos.wsgi.application'
 
 
 # Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'JessicaGarcia1$sos',
-        'USER': 'JessicaGarcia1',
-        'PASSWORD': os.getenv('SENHA_DB'),  # Pega a senha do arquivo .env
-        'HOST': 'JessicaGarcia1.mysql.pythonanywhere-services.com',
-        'PORT': '3306',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            'charset': 'utf8mb4',
-        },
+DB_PASSWORD = os.getenv('SENHA_DB')
+
+if DB_PASSWORD:
+    # --- CONFIGURAÇÃO DE PRODUÇÃO (PYTHONANYWHERE) ---
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'JessicaGarcia1$sos',
+            'USER': 'JessicaGarcia1',
+            'PASSWORD': DB_PASSWORD,
+            'HOST': 'JessicaGarcia1.mysql.pythonanywhere-services.com',
+            'PORT': '3306',
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+                'charset': 'utf8mb4',
+            },
+        }
     }
-}
+else:
+    # --- CONFIGURAÇÃO LOCAL (SEU MAC) ---
+    # Usa SQLite para não precisar instalar nada complicado no Mac
+    print("⚠️  AVISO: Usando Banco de Dados Local (SQLite) ⚠️")
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Mantém conexão viva por 5 minutos (Evita erro 500 no PythonAnywhere)
 CONN_MAX_AGE = 300

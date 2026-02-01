@@ -21,6 +21,7 @@ class PerfilInline(admin.StackedInline):
     model = Perfil
     can_delete = False
     verbose_name_plural = 'Dados Complementares (CPF/Endereço)'
+    fields = ('cpf', 'endereco', 'creditos_pulseira')
 
 # ==================================================
 # 2. ATUALIZAÇÃO DO ADMIN DE USUÁRIO

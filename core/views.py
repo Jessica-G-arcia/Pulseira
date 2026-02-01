@@ -88,13 +88,27 @@ def dashboard(request):
 
 @login_required(login_url='/login/')
 def criar_pulseira(request):
-    """Formulário para adicionar novas pulseiras"""
+    """Cria pulseira SOMENTE se o usuário tiver crédito"""
+    
+    # 1. VERIFICAÇÃO DE SALDO
+    # Se o usuário NÃO tem perfil ou o saldo é 0 (ou negativo), manda pra loja
+    if not hasattr(request.user, 'perfil') or request.user.perfil.creditos_pulseira <= 0:
+        # Você pode usar o 'messages' para avisar o motivo
+        # messages.warning(request, "Você precisa comprar um crédito para adicionar uma nova pulseira.")
+        return redirect('loja_produtos') 
+
+    # 2. LÓGICA PADRÃO DE CRIAÇÃO
     if request.method == 'POST':
         form = PulseiraForm(request.POST, request.FILES)
         if form.is_valid():
             nova_pulseira = form.save(commit=False)
-            nova_pulseira.usuario = request.user # Vincula ao dono logado
+            nova_pulseira.usuario = request.user
             nova_pulseira.save()
+            
+            # 3. CONSUMO DO CRÉDITO (A mágica acontece aqui)
+            request.user.perfil.creditos_pulseira -= 1
+            request.user.perfil.save()
+            
             return redirect('dashboard')
     else:
         form = PulseiraForm()
@@ -200,3 +214,6 @@ def robots_txt(request):
         "Disallow: /",    # Bloqueie TUDO a partir da raiz
     ]
     return HttpResponse("\n".join(linhas), content_type="text/plain")
+
+def loja_produtos(request):
+    return render(request, 'core/loja.html')
