@@ -137,6 +137,37 @@ class Perfil(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
     cpf = models.CharField(max_length=14, unique=True, verbose_name="CPF") # Adicionado unique=True
     endereco = models.TextField(verbose_name="Endereço Completo")
+    creditos_pulseira = models.IntegerField(default=0)
 
     def __str__(self):
         return f"Perfil de {self.user.username}"
+    
+
+class Produto(models.Model):
+    TIPO_CHOICES = (
+        ('digital', 'Apenas QR Code (Digital)'),
+        ('fisico_adesivo', 'Adesivo NFC + QR'),
+        ('fisico_resina', 'Peça em Resina (Pulseira/Colar/Chaveiro)'),
+    )
+    nome = models.CharField(max_length=100)
+    preco = models.DecimalField(max_digits=10, decimal_places=2)
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
+    descricao = models.TextField()
+
+    def __str__(self):
+        return self.nome
+
+class Pedido(models.Model):
+    STATUS_CHOICES = (
+        ('pendente', 'Pendente'),
+        ('pago', 'Pago'),
+        ('enviado', 'Enviado'),
+    )
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    produto = models.ForeignKey(Produto, on_delete=models.PROTECT)
+    data_pedido = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
+    id_transacao = models.CharField(max_length=100, blank=True) # ID do MercadoPago/Stripe
+
+    def __str__(self):
+        return f"Pedido {self.id} - {self.usuario.username}"
